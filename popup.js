@@ -20,18 +20,49 @@ document.addEventListener('DOMContentLoaded', async function() {
   // Get replacement count from content script
   try {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    const response = await chrome.tabs.sendMessage(tab.id, { action: 'getReplaceCount' });
-    if (response && response.count !== undefined) {
-      replaceCount.textContent = response.count;
+    
+    // 检查是否是扩展页面
+    if (!tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://')) {
+      const response = await chrome.tabs.sendMessage(tab.id, { action: 'getReplaceCount' });
+      if (response && response.count !== undefined) {
+        replaceCount.textContent = response.count;
+      }
+    } else {
+      // 对于扩展页面，从存储中获取计数
+      const storageResult = await chrome.storage.sync.get(['replaceCount']);
+      replaceCount.textContent = storageResult.replaceCount || 0;
     }
   } catch (error) {
     console.log('Unable to get replacement count:', error);
+    // 从存储中获取计数作为备选
+    const storageResult = await chrome.storage.sync.get(['replaceCount']);
+    replaceCount.textContent = storageResult.replaceCount || 0;
   }
   
   // Toggle switch event
   toggleSwitch.addEventListener('click', async function() {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+      
+      // 检查是否是扩展页面
+      if (tab.url.startsWith('chrome://') || tab.url.startsWith('chrome-extension://')) {
+        console.log('无法在扩展页面中切换');
+        return;
+      }
+      
+      // 尝试注入 content script（如果还没有注入）
+      try {
+        await chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          files: ['content.js']
+        });
+      } catch (injectError) {
+        console.log('Content script 可能已经注入或无法注入:', injectError);
+      }
+      
+      // 等待一下让 content script 加载
+      await new Promise(resolve => setTimeout(resolve, 100));
+      
       const response = await chrome.tabs.sendMessage(tab.id, { action: 'toggle' });
       
       if (response && response.success) {
@@ -45,6 +76,12 @@ document.addEventListener('DOMContentLoaded', async function() {
       const newState = !isEnabled;
       updateUI(newState);
       await chrome.storage.sync.set({ isEnabled: newState });
+      
+      // 显示用户友好的错误信息
+      status.textContent = 'Error - Try refreshing page';
+      setTimeout(() => {
+        updateUI(newState);
+      }, 2000);
     }
   });
   
@@ -74,12 +111,26 @@ document.addEventListener('DOMContentLoaded', async function() {
   setInterval(async function() {
     try {
       const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-      const response = await chrome.tabs.sendMessage(tab.id, { action: 'getReplaceCount' });
-      if (response && response.count !== undefined) {
-        replaceCount.textContent = response.count;
+      
+      // 检查是否是扩展页面
+      if (!tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://')) {
+        const response = await chrome.tabs.sendMessage(tab.id, { action: 'getReplaceCount' });
+        if (response && response.count !== undefined) {
+          replaceCount.textContent = response.count;
+        }
+      } else {
+        // 对于扩展页面，从存储中获取计数
+        const storageResult = await chrome.storage.sync.get(['replaceCount']);
+        replaceCount.textContent = storageResult.replaceCount || 0;
       }
     } catch (error) {
-      // Silently handle errors
+      // 从存储中获取计数作为备选
+      try {
+        const storageResult = await chrome.storage.sync.get(['replaceCount']);
+        replaceCount.textContent = storageResult.replaceCount || 0;
+      } catch (storageError) {
+        // Silently handle errors
+      }
     }
   }, 2000);
 });

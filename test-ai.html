@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI 内容转换测试</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 20px;
+      padding: 40px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+    }
+    
+    h1 {
+      color: #667eea;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    
+    .info {
+      background: #e3f2fd;
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+    
+    .test-section {
+      margin: 30px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+      border-left: 4px solid #667eea;
+    }
+    
+    h2 {
+      color: #333;
+      margin-top: 0;
+    }
+    
+    .test-text {
+      line-height: 1.8;
+      padding: 15px;
+      background: white;
+      border-radius: 8px;
+      margin: 10px 0;
+    }
+    
+    .label {
+      font-weight: 600;
+      color: #667eea;
+      margin-bottom: 10px;
+    }
+    
+    code {
+      background: #f5f5f5;
+      padding: 2px 6px;
+      border-radius: 3px;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🤖 AI 内容转换测试</h1>
+    
+    <div class="info">
+      <strong>📢 说明：</strong><br>
+      • 此页面用于测试 AI 内容转换功能<br>
+      • 使用 config.js 中配置的 API Keys<br>
+      • 刷新页面查看转换效果<br>
+      • 悬停在彩色高亮处查看原始内容和使用的 AI 服务
+    </div>
+    
+    <div class="test-section">
+      <h2>测试 1：基础负面内容</h2>
+      <div class="label">原始文本：</div>
+      <div class="test-text">
+        This movie is terrible and the acting is awful. I hate everything about it.
+        What a disgusting waste of time!
+      </div>
+    </div>
+    
+    <div class="test-section">
+      <h2>测试 2：情绪化表达</h2>
+      <div class="label">原始文本：</div>
+      <div class="test-text">
+        I'm so frustrated and angry with this stupid project. Everything is broken
+        and I feel hopeless. This is pointless.
+      </div>
+    </div>
+    
+    <div class="test-section">
+      <h2>测试 3：对抗性言论</h2>
+      <div class="label">原始文本：</div>
+      <div class="test-text">
+        You're an idiot and your ideas are dumb. This is the worst thing I've ever seen.
+        Your work is useless and pathetic.
+      </div>
+    </div>
+    
+    <div class="test-section">
+      <h2>测试 4：复杂混合场景</h2>
+      <div class="label">原始文本：</div>
+      <div class="test-text">
+        Today was an awful day. My boss said my work is bad and I feel sad and angry.
+        I'm sick of this stupid job. Life is cruel and everything is broken.
+      </div>
+    </div>
+    
+    <div class="test-section">
+      <h2>测试 5：中文内容</h2>
+      <div class="label">原始文本：</div>
+      <div class="test-text">
+        这部电影太糟糕了，演技很差，剧情愚蠢。我讨厌这一切，真是浪费时间！
+        我对这个项目感到疲惫和沮丧，一切都出了问题。
+      </div>
+    </div>
+    
+    <div class="info" style="background: #fff3cd; border-color: #ffc107;">
+      <strong>🔍 检查内容：</strong><br>
+      1. 负面词汇是否被转换？<br>
+      2. 转换后的内容是否自然流畅？<br>
+      3. 悬停查看使用的是 OpenAI 还是 HuggingFace<br>
+      4. 如果转换失败，是否自动降级到硬编码模式？<br>
+      5. 打开控制台查看详细日志
+    </div>
+    
+    <div class="test-section">
+      <h2>性能测试</h2>
+      <div class="label">大量重复负面词汇：</div>
+      <div class="test-text">
+        bad bad bad bad bad
+        hate hate hate hate
+        stupid stupid stupid
+        terrible terrible terrible
+        awful awful awful
+      </div>
+    </div>
+    
+    <div class="info" style="background: #d4edda; border-color: #28a745;">
+      <strong>✅ 配置信息：</strong><br>
+      • AI 服务：<code id="ai-service">加载中...</code><br>
+      • OpenAI 模型：<code>gpt-3.5-turbo</code><br>
+      • HF 模型：<code>facebook/bart-large-cnn</code><br>
+      • 转换策略：<code>WORD_REPLACER</code>
+    </div>
+  </div>
+  
+  <script src="test-ai.js"></script>
+</body>
+</html>

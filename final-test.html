@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>最终测试页面</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border-left: 4px solid #007bff;
+    }
+    
+    .status {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+    }
+    
+    .highlight {
+      background: #fff3cd;
+      padding: 10px;
+      border-radius: 5px;
+      margin: 10px 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎯 最终测试页面</h1>
+  
+  <div class="status">
+    <strong>测试说明：</strong><br>
+    1. 确保扩展已启用<br>
+    2. 查看下面的文字是否被转换<br>
+    3. 悬停在彩色文字上查看提示<br>
+    4. 点击扩展图标查看状态
+  </div>
+  
+  <div class="test-section">
+    <h3>英文测试</h3>
+    <p>This is a terrible movie. I hate it so much. The acting is awful and the plot is stupid.</p>
+    <p>You are an idiot and your work is useless. This is the worst thing ever.</p>
+    <p>I'm so angry and frustrated. Everything is broken and I feel hopeless.</p>
+  </div>
+  
+  <div class="test-section">
+    <h3>中文测试</h3>
+    <p>这部电影太糟糕了，我讨厌它。演技很差，剧情愚蠢。</p>
+    <p>你是个白痴，你的工作毫无用处。这是最糟糕的事情。</p>
+    <p>我很愤怒和沮丧。一切都坏了，我感到绝望。</p>
+  </div>
+  
+  <div class="test-section">
+    <h3>混合测试</h3>
+    <p>This is a terrible 糟糕的 movie. I hate 讨厌 it so much.</p>
+    <p>The acting is awful 可怕的 and the plot is stupid 愚蠢的.</p>
+  </div>
+  
+  <div class="highlight">
+    <strong>预期结果：</strong><br>
+    • 负面词汇应该被转换为正面词汇<br>
+    • 转换后的文字应该有绿色高亮<br>
+    • 悬停时显示 "OpenAI转换: [原文字]"<br>
+    • 扩展图标显示转换计数
+  </div>
+  
+  <script>
+    console.log('最终测试页面已加载');
+    
+    // 检查扩展状态
+    if (typeof chrome !== 'undefined') {
+      chrome.storage.sync.get(['isEnabled', 'useAI'], function(result) {
+        console.log('扩展状态:', result);
+      });
+    }
+    
+    // 监听页面变化
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              const spans = node.querySelectorAll('.positive-replacement');
+              if (spans.length > 0) {
+                console.log('✅ 检测到转换后的内容:', spans.length, '个');
+                spans.forEach(span => {
+                  console.log('转换:', span.textContent, '提示:', span.title);
+                });
+              }
+            }
+          });
+        }
+      });
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    // 10秒后检查结果
+    setTimeout(() => {
+      const convertedElements = document.querySelectorAll('.positive-replacement');
+      if (convertedElements.length > 0) {
+        console.log('🎉 成功！检测到', convertedElements.length, '个转换的元素');
+        alert('✅ 测试成功！检测到 ' + convertedElements.length + ' 个转换的元素');
+      } else {
+        console.log('❌ 没有检测到转换，可能存在问题');
+        alert('❌ 测试失败！没有检测到转换的元素');
+      }
+    }, 10000);
+  </script>
+</body>
+</html>

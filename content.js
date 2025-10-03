@@ -1,124 +1,52 @@
-// Core logic for negative content detection and replacement
+// AI-powered content replacement - No hardcoded words
 class PositiveContentReplacer {
   constructor() {
-    this.negativeWords = new Set([
+    // 简单的负面词汇列表，仅用于快速检测是否需要调用 AI
+    this.negativeKeywords = new Set([
       'hate', 'stupid', 'ugly', 'terrible', 'awful', 'horrible', 'disgusting',
-      'hateful', 'mean', 'cruel', 'evil', 'bad', 'wrong', 'fail', 'loser',
-      'idiot', 'moron', 'dumb', 'suck', 'sucks', 'sucked', 'sucking',
-      'annoying', 'irritating', 'frustrating', 'angry', 'mad', 'furious',
-      'disappointed', 'disappointing', 'sad', 'depressed', 'miserable',
-      'boring', 'bored', 'tired', 'exhausted', 'sick', 'ill', 'painful',
-      'hurt', 'hurtful', 'damage', 'destroy', 'ruin', 'break', 'broken',
-      'useless', 'worthless', 'pointless', 'meaningless', 'empty', 'void',
-      'hopeless', 'helpless', 'powerless', 'weak', 'pathetic', 'pitiful',
-      'shameful', 'embarrassing', 'disgraceful', 'disgusting', 'revolting',
-      'nasty', 'gross', 'vile', 'filthy', 'dirty', 'contaminated',
-      'corrupted', 'tainted', 'polluted', 'infected', 'diseased',
-      'cursed', 'damned', 'doomed', 'fated', 'destined', 'condemned'
+      'bad', 'wrong', 'fail', 'loser', 'idiot', 'moron', 'dumb', 'suck',
+      'annoying', 'angry', 'sad', 'depressed', 'boring', 'useless', 'hopeless'
     ]);
     
-    this.positiveReplacements = {
-      'hate': 'love',
-      'stupid': 'clever',
-      'ugly': 'beautiful',
-      'terrible': 'wonderful',
-      'awful': 'amazing',
-      'horrible': 'fantastic',
-      'disgusting': 'delightful',
-      'hateful': 'loving',
-      'mean': 'kind',
-      'cruel': 'gentle',
-      'evil': 'good',
-      'bad': 'great',
-      'wrong': 'right',
-      'fail': 'succeed',
-      'loser': 'winner',
-      'idiot': 'genius',
-      'moron': 'brilliant',
-      'dumb': 'smart',
-      'suck': 'excel',
-      'sucks': 'exceeds',
-      'sucked': 'excelled',
-      'sucking': 'excelling',
-      'annoying': 'pleasing',
-      'irritating': 'soothing',
-      'frustrating': 'encouraging',
-      'angry': 'calm',
-      'mad': 'peaceful',
-      'furious': 'serene',
-      'disappointed': 'pleased',
-      'disappointing': 'satisfying',
-      'sad': 'happy',
-      'depressed': 'cheerful',
-      'miserable': 'joyful',
-      'boring': 'exciting',
-      'bored': 'engaged',
-      'tired': 'energetic',
-      'exhausted': 'refreshed',
-      'sick': 'healthy',
-      'ill': 'well',
-      'painful': 'comfortable',
-      'hurt': 'heal',
-      'hurtful': 'healing',
-      'damage': 'repair',
-      'destroy': 'build',
-      'ruin': 'improve',
-      'break': 'fix',
-      'broken': 'fixed',
-      'useless': 'useful',
-      'worthless': 'valuable',
-      'pointless': 'meaningful',
-      'meaningless': 'significant',
-      'empty': 'full',
-      'void': 'complete',
-      'hopeless': 'hopeful',
-      'helpless': 'helpful',
-      'powerless': 'powerful',
-      'weak': 'strong',
-      'pathetic': 'admirable',
-      'pitiful': 'respectable',
-      'shameful': 'proud',
-      'embarrassing': 'confident',
-      'disgraceful': 'honorable',
-      'disgusting': 'appealing',
-      'revolting': 'attractive',
-      'nasty': 'pleasant',
-      'gross': 'lovely',
-      'vile': 'noble',
-      'filthy': 'clean',
-      'dirty': 'pure',
-      'contaminated': 'pure',
-      'corrupted': 'honest',
-      'tainted': 'genuine',
-      'polluted': 'fresh',
-      'infected': 'healthy',
-      'diseased': 'well',
-      'cursed': 'blessed',
-      'damned': 'blessed',
-      'doomed': 'destined for success',
-      'fated': 'blessed',
-      'destined': 'blessed',
-      'condemned': 'redeemed'
-    };
-    
-    this.customWords = [];
-    this.sensitivity = 'medium';
     this.isEnabled = true;
     this.replaceCount = 0;
     this.observer = null;
+    this.showHighlight = true;
+    this.useAI = true;
+    this.aiService = 'openai';
+    this.systemPromptKey = 'WORD_REPLACER';
     this.init();
   }
   
   async init() {
     // Get settings from storage
-    const result = await chrome.storage.sync.get(['isEnabled', 'customWords', 'sensitivity', 'showHighlight']);
-    this.isEnabled = result.isEnabled !== false; // Default to true
-    this.customWords = result.customWords || [];
-    this.sensitivity = result.sensitivity || 'medium';
-    this.showHighlight = result.showHighlight !== false; // Default to true
+    const result = await chrome.storage.sync.get([
+      'isEnabled', 'showHighlight', 'useAI', 'aiService', 'systemPromptKey'
+    ]);
     
-    // Update word mappings
-    this.updateWordMappings();
+    this.isEnabled = result.isEnabled !== false;
+    this.showHighlight = result.showHighlight !== false;
+    this.useAI = result.useAI !== false;
+    this.aiService = result.aiService || 'openai';
+    this.systemPromptKey = result.systemPromptKey || 'WORD_REPLACER';
+    
+    console.log('Content Script 初始化:', {
+      isEnabled: this.isEnabled,
+      useAI: this.useAI,
+      aiService: this.aiService
+    });
+    
+    // 如果 AI 被禁用，自动启用
+    if (!this.useAI) {
+      console.log('AI 模式被禁用，自动启用');
+      this.useAI = true;
+      await chrome.storage.sync.set({ useAI: true });
+      
+      // 通知 background script 强制启用
+      chrome.runtime.sendMessage({ action: 'forceEnableAI' }).catch(() => {
+        // Ignore errors
+      });
+    }
     
     // Inject CSS styles
     this.injectStyles();
@@ -136,24 +64,24 @@ class PositiveContentReplacer {
     style.id = 'positive-replacement-styles';
     style.textContent = `
       .positive-replacement {
-        background: #e8f5e8 !important;
+        background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%) !important;
         padding: 2px 4px !important;
         border-radius: 4px !important;
-        border: 1px solid #4CAF50 !important;
+        border: 1px solid #ffd700 !important;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
         position: relative !important;
         display: inline-block !important;
         margin: 0 1px !important;
         transition: all 0.3s ease !important;
         font-weight: 500 !important;
-        color: #2e7d32 !important;
+        color: #333 !important;
         text-decoration: none !important;
       }
       
       .positive-replacement:hover {
         transform: translateY(-1px) !important;
         box-shadow: 0 3px 8px rgba(0,0,0,0.2) !important;
-        background: #4CAF50 !important;
+        background: linear-gradient(120deg, #74b9ff 0%, #0984e3 100%) !important;
         color: white !important;
       }
       
@@ -184,14 +112,6 @@ class PositiveContentReplacer {
       }
     `;
     document.head.appendChild(style);
-  }
-  
-  updateWordMappings() {
-    // Add custom words to replacement table
-    this.customWords.forEach(item => {
-      this.negativeWords.add(item.negative);
-      this.positiveReplacements[item.negative] = item.positive;
-    });
   }
   
   startReplacement() {
@@ -245,73 +165,120 @@ class PositiveContentReplacer {
     }
   }
   
-  replaceTextInNode(textNode) {
+  async replaceTextInNode(textNode) {
     if (!textNode || textNode.nodeType !== Node.TEXT_NODE) return;
     
-    let text = textNode.textContent;
-    let hasChanges = false;
-    let replaceCount = 0;
+    const text = textNode.textContent.trim();
     
-    // Use regex to match word boundaries
-    const words = text.split(/\b/);
-    const newWords = words.map(word => {
-      const lowerWord = word.toLowerCase();
-      if (this.negativeWords.has(lowerWord)) {
-        hasChanges = true;
-        replaceCount++;
-        return this.positiveReplacements[lowerWord] || word;
-      }
-      return word;
-    });
+    // Skip empty or very short text
+    if (!text || text.length < 3) return;
     
-    if (hasChanges) {
-      // Create highlighted HTML content
-      const highlightedText = this.createHighlightedText(words, newWords);
-      
-      // Create temporary container
-      const tempDiv = document.createElement('div');
-      tempDiv.innerHTML = highlightedText;
-      
-      // Replace text node
-      const parent = textNode.parentNode;
-      while (tempDiv.firstChild) {
-        parent.insertBefore(tempDiv.firstChild, textNode);
+    // Quick check: does this text contain any negative keywords?
+    if (!this.containsNegativeKeywords(text)) {
+      return;
+    }
+    
+    // Use AI to transform the text
+    await this.replaceWithAI(textNode, text);
+  }
+  
+  containsNegativeKeywords(text) {
+    const lowerText = text.toLowerCase();
+    for (const keyword of this.negativeKeywords) {
+      if (lowerText.includes(keyword)) {
+        return true;
       }
-      parent.removeChild(textNode);
+    }
+    return false;
+  }
+  
+  async replaceWithAI(textNode, text) {
+    try {
+      console.log('开始 AI 转换:', text);
       
-      this.replaceCount += replaceCount;
-      
-      // Notify background script to update count
-      chrome.runtime.sendMessage({
-        action: 'updateReplaceCount',
-        count: replaceCount
-      }).catch(() => {
-        // Ignore errors
+      // Call background script to transform text using AI
+      const response = await chrome.runtime.sendMessage({
+        action: 'transformText',
+        text: text
       });
+      
+      console.log('AI 转换响应:', response);
+      
+      if (response.success && response.transformedText) {
+        const transformedText = response.transformedText;
+        
+        // Only replace if actually different
+        if (transformedText !== text && transformedText.length > 0) {
+          console.log('转换成功:', text, '→', transformedText);
+          
+          // Create highlighted HTML content
+          const service = response.service || this.aiService;
+          const highlightedHTML = this.createAIHighlight(text, transformedText, service);
+          
+          console.log('生成的 HTML:', highlightedHTML);
+          
+          // Create temporary container
+          const tempDiv = document.createElement('div');
+          tempDiv.innerHTML = highlightedHTML;
+          
+          // Replace text node
+          const parent = textNode.parentNode;
+          if (parent && parent.nodeType === Node.ELEMENT_NODE) {
+            try {
+              while (tempDiv.firstChild) {
+                parent.insertBefore(tempDiv.firstChild, textNode);
+              }
+              parent.removeChild(textNode);
+              
+              this.replaceCount++;
+              
+              // Notify background script to update count
+              chrome.runtime.sendMessage({
+                action: 'updateReplaceCount',
+                count: 1
+              }).catch(() => {
+                // Ignore errors
+              });
+            } catch (error) {
+              console.warn('DOM 操作失败:', error);
+              // 如果 DOM 操作失败，尝试直接替换文本内容
+              textNode.textContent = transformedText;
+            }
+          } else {
+            console.warn('无法找到有效的父节点');
+          }
+        } else {
+          console.log('转换结果相同，跳过替换');
+        }
+      } else if (response.error) {
+        // AI 转换失败，记录错误但不做替换
+        console.warn(`AI 转换失败: ${response.error}`);
+      } else {
+        console.log('AI 转换无响应或失败');
+      }
+    } catch (error) {
+      console.warn(`AI 转换异常:`, error);
     }
   }
   
-  createHighlightedText(originalWords, newWords) {
-    let result = '';
-    for (let i = 0; i < originalWords.length; i++) {
-      const originalWord = originalWords[i];
-      const newWord = newWords[i];
-      
-      if (originalWord !== newWord) {
-        // Replaced words
-        if (this.showHighlight) {
-          // Add highlight style
-          result += `<span class="positive-replacement" title="Replaced: ${originalWord} → ${newWord}">${newWord}</span>`;
-        } else {
-          // Don't add highlight style
-          result += `<span class="positive-replacement-no-highlight" title="Replaced: ${originalWord} → ${newWord}">${newWord}</span>`;
-        }
-      } else {
-        // Unreplaced words, keep as is
-        result += originalWord;
-      }
+  createAIHighlight(originalText, transformedText, service = 'AI') {
+    const serviceLabel = service === 'openai' ? 'OpenAI' : 
+                        service === 'huggingface' ? 'HuggingFace' : 'AI';
+    
+    // 简化 title 内容，避免 HTML 转义问题
+    const titleText = `${serviceLabel}转换: ${originalText}`;
+    
+    if (this.showHighlight) {
+      return `<span class="positive-replacement" title="${titleText}">${this.escapeHtml(transformedText)}</span>`;
+    } else {
+      return `<span class="positive-replacement-no-highlight" title="${titleText}">${this.escapeHtml(transformedText)}</span>`;
     }
-    return result;
+  }
+  
+  escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = text;
+    return div.innerHTML;
   }
   
   async toggle() {
@@ -332,67 +299,11 @@ class PositiveContentReplacer {
   }
   
   async updateSettings(settings) {
-    this.isEnabled = settings.isEnabled;
-    this.customWords = settings.customWords || [];
-    this.sensitivity = settings.sensitivity || 'medium';
+    this.isEnabled = settings.isEnabled !== false;
     this.showHighlight = settings.showHighlight !== false;
-    
-    // Rebuild word mappings
-    this.negativeWords.clear();
-    this.positiveReplacements = {};
-    
-    // Re-add built-in words
-    const builtInWords = [
-      'hate', 'stupid', 'ugly', 'terrible', 'awful', 'horrible', 'disgusting',
-      'hateful', 'mean', 'cruel', 'evil', 'bad', 'wrong', 'fail', 'loser',
-      'idiot', 'moron', 'dumb', 'suck', 'sucks', 'sucked', 'sucking',
-      'annoying', 'irritating', 'frustrating', 'angry', 'mad', 'furious',
-      'disappointed', 'disappointing', 'sad', 'depressed', 'miserable',
-      'boring', 'bored', 'tired', 'exhausted', 'sick', 'ill', 'painful',
-      'hurt', 'hurtful', 'damage', 'destroy', 'ruin', 'break', 'broken',
-      'useless', 'worthless', 'pointless', 'meaningless', 'empty', 'void',
-      'hopeless', 'helpless', 'powerless', 'weak', 'pathetic', 'pitiful',
-      'shameful', 'embarrassing', 'disgraceful', 'disgusting', 'revolting',
-      'nasty', 'gross', 'vile', 'filthy', 'dirty', 'contaminated',
-      'corrupted', 'tainted', 'polluted', 'infected', 'diseased',
-      'cursed', 'damned', 'doomed', 'fated', 'destined', 'condemned'
-    ];
-    
-    const builtInReplacements = {
-      'hate': 'love', 'stupid': 'clever', 'ugly': 'beautiful', 'terrible': 'wonderful',
-      'awful': 'amazing', 'horrible': 'fantastic', 'disgusting': 'delightful',
-      'hateful': 'loving', 'mean': 'kind', 'cruel': 'gentle', 'evil': 'good',
-      'bad': 'great', 'wrong': 'right', 'fail': 'succeed', 'loser': 'winner',
-      'idiot': 'genius', 'moron': 'brilliant', 'dumb': 'smart', 'suck': 'excel',
-      'sucks': 'exceeds', 'sucked': 'excelled', 'sucking': 'excelling',
-      'annoying': 'pleasing', 'irritating': 'soothing', 'frustrating': 'encouraging',
-      'angry': 'calm', 'mad': 'peaceful', 'furious': 'serene',
-      'disappointed': 'pleased', 'disappointing': 'satisfying', 'sad': 'happy',
-      'depressed': 'cheerful', 'miserable': 'joyful', 'boring': 'exciting',
-      'bored': 'engaged', 'tired': 'energetic', 'exhausted': 'refreshed',
-      'sick': 'healthy', 'ill': 'well', 'painful': 'comfortable',
-      'hurt': 'heal', 'hurtful': 'healing', 'damage': 'repair', 'destroy': 'build',
-      'ruin': 'improve', 'break': 'fix', 'broken': 'fixed', 'useless': 'useful',
-      'worthless': 'valuable', 'pointless': 'meaningful', 'meaningless': 'significant',
-      'empty': 'full', 'void': 'complete', 'hopeless': 'hopeful', 'helpless': 'helpful',
-      'powerless': 'powerful', 'weak': 'strong', 'pathetic': 'admirable',
-      'pitiful': 'respectable', 'shameful': 'proud', 'embarrassing': 'confident',
-      'disgraceful': 'honorable', 'disgusting': 'appealing', 'revolting': 'attractive',
-      'nasty': 'pleasant', 'gross': 'lovely', 'vile': 'noble', 'filthy': 'clean',
-      'dirty': 'pure', 'contaminated': 'pure', 'corrupted': 'honest',
-      'tainted': 'genuine', 'polluted': 'fresh', 'infected': 'healthy',
-      'diseased': 'well', 'cursed': 'blessed', 'damned': 'blessed',
-      'doomed': 'destined for success', 'fated': 'blessed', 'destined': 'blessed',
-      'condemned': 'redeemed'
-    };
-    
-    builtInWords.forEach(word => {
-      this.negativeWords.add(word);
-      this.positiveReplacements[word] = builtInReplacements[word];
-    });
-    
-    // Add custom words
-    this.updateWordMappings();
+    this.useAI = settings.useAI !== false;
+    this.aiService = settings.aiService || 'openai';
+    this.systemPromptKey = settings.systemPromptKey || 'WORD_REPLACER';
     
     if (this.isEnabled) {
       this.startReplacement();

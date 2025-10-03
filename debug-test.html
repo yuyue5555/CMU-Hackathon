@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>调试测试页面</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    .test-text {
+      line-height: 1.8;
+      padding: 15px;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin: 15px 0;
+      border-left: 4px solid #007bff;
+    }
+    
+    .debug-info {
+      background: #e3f2fd;
+      border-left: 4px solid #2196F3;
+      padding: 15px;
+      margin: 20px 0;
+      border-radius: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🔍 调试测试页面</h1>
+    
+    <div class="debug-info">
+      <strong>调试说明：</strong><br>
+      1. 打开浏览器控制台 (F12)<br>
+      2. 查看是否有 AI 转换的日志<br>
+      3. 检查是否有错误信息<br>
+      4. 悬停在彩色文字上查看提示
+    </div>
+    
+    <div class="test-text">
+      This is a terrible movie. I hate it so much. The acting is awful and the plot is stupid.
+    </div>
+    
+    <div class="test-text">
+      You are an idiot and your work is useless. This is the worst thing ever.
+    </div>
+    
+    <div class="test-text">
+      I'm so angry and frustrated. Everything is broken and I feel hopeless.
+    </div>
+    
+    <div class="test-text">
+      这部电影太糟糕了，我讨厌它。演技很差，剧情愚蠢。
+    </div>
+    
+    <div class="debug-info">
+      <strong>检查项目：</strong><br>
+      • 是否有文字被高亮显示？<br>
+      • 悬停时是否显示提示？<br>
+      • 控制台是否有错误？<br>
+      • 是否有 "AI 转换" 的日志？
+    </div>
+  </div>
+  
+  <script src="debug-test.js"></script>
+</body>
+</html>

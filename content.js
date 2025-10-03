@@ -35,7 +35,8 @@ if (typeof window.PositiveContentReplacer === 'undefined') {
     console.log('Content Script 初始化:', {
       isEnabled: this.isEnabled,
       useAI: this.useAI,
-      aiService: this.aiService
+      aiService: this.aiService,
+      storageResult: result
     });
     
     // 如果 AI 被禁用，自动启用
@@ -455,9 +456,30 @@ if (typeof window.PositiveContentReplacer === 'undefined') {
         this.observer.disconnect();
         this.observer = null;
       }
-      // Reload page to restore original content
-      window.location.reload();
+      // 移除所有转换后的元素，恢复原始文本
+      this.removeAllReplacements();
     }
+  }
+  
+  removeAllReplacements() {
+    // 移除所有转换后的元素，恢复原始文本
+    const replacements = document.querySelectorAll('.positive-replacement, .positive-replacement-no-highlight');
+    replacements.forEach(element => {
+      const parent = element.parentNode;
+      if (parent) {
+        // 获取原始文本
+        const originalText = element.getAttribute('data-original');
+        if (originalText) {
+          // 创建文本节点替换
+          const textNode = document.createTextNode(originalText);
+          parent.replaceChild(textNode, element);
+        } else {
+          // 如果没有原始文本，使用转换后的文本
+          const textNode = document.createTextNode(element.textContent);
+          parent.replaceChild(textNode, element);
+        }
+      }
+    });
   }
   
   async updateSettings(settings) {

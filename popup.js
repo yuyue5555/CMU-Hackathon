@@ -82,6 +82,20 @@ document.addEventListener('DOMContentLoaded', async function() {
       setTimeout(() => {
         updateUI(newState);
       }, 2000);
+      
+      // 尝试重新注入 content script
+      try {
+        const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!tab.url.startsWith('chrome://') && !tab.url.startsWith('chrome-extension://')) {
+          await chrome.scripting.executeScript({
+            target: { tabId: tab.id },
+            files: ['content.js']
+          });
+          console.log('Content script 重新注入成功');
+        }
+      } catch (injectError) {
+        console.log('重新注入 content script 失败:', injectError);
+      }
     }
   });
   

@@ -136,24 +136,24 @@ class PositiveContentReplacer {
     style.id = 'positive-replacement-styles';
     style.textContent = `
       .positive-replacement {
-        background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%) !important;
+        background: #e8f5e8 !important;
         padding: 2px 4px !important;
         border-radius: 4px !important;
-        border: 1px solid #ffd700 !important;
+        border: 1px solid #4CAF50 !important;
         box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
         position: relative !important;
         display: inline-block !important;
         margin: 0 1px !important;
         transition: all 0.3s ease !important;
         font-weight: 500 !important;
-        color: #333 !important;
+        color: #2e7d32 !important;
         text-decoration: none !important;
       }
       
       .positive-replacement:hover {
         transform: translateY(-1px) !important;
         box-shadow: 0 3px 8px rgba(0,0,0,0.2) !important;
-        background: linear-gradient(120deg, #74b9ff 0%, #0984e3 100%) !important;
+        background: #4CAF50 !important;
         color: white !important;
       }
       

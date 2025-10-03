@@ -1,5 +1,7 @@
 // AI-powered content replacement - No hardcoded words
-class PositiveContentReplacer {
+// 检查是否已经存在，避免重复声明
+if (typeof window.PositiveContentReplacer === 'undefined') {
+  window.PositiveContentReplacer = class PositiveContentReplacer {
   constructor() {
     // 简单的负面词汇列表，仅用于快速检测是否需要调用 AI
     this.negativeKeywords = new Set([
@@ -149,6 +151,19 @@ class PositiveContentReplacer {
               return;
             }
             
+            // 跳过由我们自己的悬停事件产生的文本变化
+            if (node.nodeType === Node.TEXT_NODE && node.parentElement && 
+                (node.parentElement.classList.contains('positive-replacement') || 
+                 node.parentElement.classList.contains('positive-replacement-no-highlight'))) {
+              return;
+            }
+            
+            // 跳过正在悬停处理的元素
+            if (node.nodeType === Node.TEXT_NODE && node.parentElement && 
+                node.parentElement.dataset && node.parentElement.dataset.hovering === 'true') {
+              return;
+            }
+            
             if (node.nodeType === Node.TEXT_NODE) {
               this.replaceTextInNode(node);
             } else if (node.nodeType === Node.ELEMENT_NODE) {
@@ -205,7 +220,7 @@ class PositiveContentReplacer {
     }
     
     // 检查是否已经处理过
-    if (textNode.dataset.processed) {
+    if (textNode.dataset && textNode.dataset.processed) {
       return;
     }
     
@@ -220,7 +235,9 @@ class PositiveContentReplacer {
     }
     
     // 标记为已处理
-    textNode.dataset.processed = 'true';
+    if (textNode.dataset) {
+      textNode.dataset.processed = 'true';
+    }
     
     // Use AI to transform the text
     await this.replaceWithAI(textNode, text);
@@ -386,28 +403,41 @@ class PositiveContentReplacer {
     // 使用事件委托来处理动态添加的元素
     document.addEventListener('mouseenter', (event) => {
       const target = event.target;
-      if (target.classList.contains('positive-replacement') || target.classList.contains('positive-replacement-no-highlight')) {
+      if (target && target.classList && 
+          (target.classList.contains('positive-replacement') || target.classList.contains('positive-replacement-no-highlight'))) {
         // 检查当前状态，避免重复切换
-        if (target.dataset.current === 'original') return;
+        if (target.dataset && target.dataset.current === 'original') return;
+        
+        // 标记正在处理悬停事件，防止 MutationObserver 重新处理
+        if (target.dataset) {
+          target.dataset.hovering = 'true';
+        }
         
         const original = target.getAttribute('data-original');
         if (original) {
           target.textContent = original;
-          target.dataset.current = 'original';
+          if (target.dataset) {
+            target.dataset.current = 'original';
+          }
         }
       }
     }, true);
     
     document.addEventListener('mouseleave', (event) => {
       const target = event.target;
-      if (target.classList.contains('positive-replacement') || target.classList.contains('positive-replacement-no-highlight')) {
+      if (target && target.classList && 
+          (target.classList.contains('positive-replacement') || target.classList.contains('positive-replacement-no-highlight'))) {
         // 检查当前状态，避免重复切换
-        if (target.dataset.current === 'transformed') return;
+        if (target.dataset && target.dataset.current === 'transformed') return;
         
         const transformed = target.getAttribute('data-transformed');
         if (transformed) {
           target.textContent = transformed;
-          target.dataset.current = 'transformed';
+          if (target.dataset) {
+            target.dataset.current = 'transformed';
+            // 清除悬停标记
+            delete target.dataset.hovering;
+          }
         }
       }
     }, true);
@@ -444,10 +474,13 @@ class PositiveContentReplacer {
       this.observer = null;
     }
   }
+  };
 }
 
-// Initialize replacer
-const replacer = new PositiveContentReplacer();
+// 检查是否已经初始化，避免重复初始化
+if (typeof window.positiveContentReplacer === 'undefined') {
+  window.positiveContentReplacer = new window.PositiveContentReplacer();
+}
 
 // Listen for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
@@ -459,28 +492,36 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
     
     if (request.action === 'toggle') {
-      replacer.toggle().then(() => {
-        sendResponse({ success: true, isEnabled: replacer.isEnabled });
-      }).catch(error => {
-        console.warn('Toggle 失败:', error);
-        sendResponse({ success: false, error: error.message });
-      });
+      if (window.positiveContentReplacer) {
+        window.positiveContentReplacer.toggle().then(() => {
+          sendResponse({ success: true, isEnabled: window.positiveContentReplacer.isEnabled });
+        }).catch(error => {
+          console.warn('Toggle 失败:', error);
+          sendResponse({ success: false, error: error.message });
+        });
+      } else {
+        sendResponse({ success: false, error: 'Replacer not initialized' });
+      }
       return true; // Keep message channel open
     } else if (request.action === 'getStatus') {
-      sendResponse({ isEnabled: replacer.isEnabled });
+      sendResponse({ isEnabled: window.positiveContentReplacer ? window.positiveContentReplacer.isEnabled : false });
     } else if (request.action === 'getReplaceCount') {
-      sendResponse({ count: replacer.replaceCount });
+      sendResponse({ count: window.positiveContentReplacer ? window.positiveContentReplacer.replaceCount : 0 });
     } else if (request.action === 'updateSettings') {
-      replacer.updateSettings(request.settings).then(() => {
-        sendResponse({ success: true });
-      }).catch(error => {
-        console.warn('更新设置失败:', error);
-        sendResponse({ success: false, error: error.message });
-      });
+      if (window.positiveContentReplacer) {
+        window.positiveContentReplacer.updateSettings(request.settings).then(() => {
+          sendResponse({ success: true });
+        }).catch(error => {
+          console.warn('更新设置失败:', error);
+          sendResponse({ success: false, error: error.message });
+        });
+      } else {
+        sendResponse({ success: false, error: 'Replacer not initialized' });
+      }
       return true; // Keep message channel open
     } else if (request.action === 'enable') {
-      if (!replacer.isEnabled) {
-        replacer.toggle();
+      if (window.positiveContentReplacer && !window.positiveContentReplacer.isEnabled) {
+        window.positiveContentReplacer.toggle();
       }
       sendResponse({ success: true });
     }

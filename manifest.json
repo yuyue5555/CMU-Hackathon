@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Positive Content Replacer",
+  "name": "SafeBark",
   "version": "1.0",
-  "description": "Detect and replace negative content with positive words on web pages",
+  "description": "SafeBark - AI-powered content safety and positive transformation",
   "permissions": [
     "activeTab",
     "storage",

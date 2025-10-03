@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自定义词汇替换测试</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .container {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .test-section h2 {
+            color: #555;
+            margin-top: 0;
+            font-size: 18px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+
+        .test-content {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-left: 4px solid #4CAF50;
+            border-radius: 4px;
+        }
+
+        .original {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        .instructions {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+
+        .instructions ol {
+            margin-bottom: 0;
+        }
+
+        code {
+            background: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🔄 自定义词汇替换测试页面</h1>
+
+        <div class="instructions">
+            <h3>📋 测试步骤：</h3>
+            <ol>
+                <li>打开扩展的选项页面（Options）</li>
+                <li>在 "Custom Words" 部分添加以下词汇对：
+                    <ul>
+                        <li><code>hate</code> → <code>love</code></li>
+                        <li><code>stupid</code> → <code>smart</code></li>
+                        <li><code>ugly</code> → <code>beautiful</code></li>
+                        <li><code>terrible</code> → <code>wonderful</code></li>
+                    </ul>
+                </li>
+                <li>点击 "Save Settings" 保存设置</li>
+                <li>刷新此页面，查看替换效果</li>
+                <li>自定义词汇应该优先于 AI 替换</li>
+            </ol>
+        </div>
+
+        <div class="test-section">
+            <h2>测试 1: 单个词汇替换</h2>
+            <div class="test-content">
+                <p>I <span class="original">hate</span> this weather.</p>
+                <p>That's a <span class="original">stupid</span> idea.</p>
+                <p>This building is <span class="original">ugly</span>.</p>
+                <p>The service was <span class="original">terrible</span>.</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>测试 2: 混合内容（自定义词 + AI 处理）</h2>
+            <div class="test-content">
+                <p>I <span class="original">hate</span> this <span class="original">awful</span> weather, it's <span
+                        class="original">horrible</span>!</p>
+                <p>说明：<code>hate</code> 应该被自定义词替换为 <code>love</code>，而 <code>awful</code> 和 <code>horrible</code> 应该由 AI
+                    处理</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>测试 3: 大小写不敏感测试</h2>
+            <div class="test-content">
+                <p>I <span class="original">HATE</span> this.</p>
+                <p>That's <span class="original">Stupid</span>!</p>
+                <p>So <span class="original">UGLY</span> and <span class="original">TeRrIbLe</span>!</p>
+                <p>说明：自定义词替换应该不区分大小写</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>测试 4: 词边界测试</h2>
+            <div class="test-content">
+                <p>I <span class="original">hate</span> this, but whatever.</p>
+                <p>I updated my status.</p>
+                <p>说明：<code>hate</code> 应该被替换，但 <code>updated</code> 中的 "ate" 不应该被替换（词边界检测）</p>
+            </div>
+        </div>
+
+        <div class="test-section">
+            <h2>测试 5: 优先级验证</h2>
+            <div class="test-content">
+                <p>原文：I <span class="original">hate</span> this <span class="original">stupid</span> and <span
+                        class="original">ugly</span> design, it's <span class="original">terrible</span> and <span
+                        class="original">disgusting</span>!</p>
+                <p>预期结果：</p>
+                <ul>
+                    <li><code>hate</code> → <code>love</code> (自定义词)</li>
+                    <li><code>stupid</code> → <code>smart</code> (自定义词)</li>
+                    <li><code>ugly</code> → <code>beautiful</code> (自定义词)</li>
+                    <li><code>terrible</code> → <code>wonderful</code> (自定义词)</li>
+                    <li><code>disgusting</code> → AI 处理</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="test-section" style="background: #e8f5e9;">
+            <h2>✅ 成功标志</h2>
+            <div class="test-content">
+                <p>如果扩展正常工作：</p>
+                <ul>
+                    <li>红色标记的词汇应该被替换</li>
+                    <li>自定义词汇应该按照设置进行精确替换</li>
+                    <li>替换后的词汇应该有高亮背景（如果启用了高亮）</li>
+                    <li>鼠标悬停在替换词上应该显示原始内容</li>
+                    <li>控制台应该显示 "自定义词汇替换" 的日志</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</body>
+
+</html>

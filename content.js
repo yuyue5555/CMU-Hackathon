@@ -348,6 +348,8 @@ if (typeof window.PositiveContentReplacer === 'undefined') {
           if (response.success && response.transformedText) {
             finalText = response.transformedText;
             service = response.service || 'AI';
+            // Store response for metrics
+            this.lastTransformResponse = response;
           } else if (response.error) {
             // AI 转换失败，但如果有自定义替换，仍然使用自定义替换的结果
             if (hasCustomReplacements) {
@@ -369,8 +371,12 @@ if (typeof window.PositiveContentReplacer === 'undefined') {
             return;
           }
 
-          // 使用安全的 DOM 替换方法
-          this.safeReplaceTextNode(textNode, originalText, finalText, service);
+          // 使用安全的 DOM 替换方法，传递metrics
+          const metrics = {
+            toxicityScore: this.lastTransformResponse?.toxicityScore || 0,
+            processingTime: this.lastTransformResponse?.processingTime || 0
+          };
+          this.safeReplaceTextNode(textNode, originalText, finalText, service, metrics);
         } else {
           console.log('转换结果相同，跳过替换');
         }
@@ -388,7 +394,7 @@ if (typeof window.PositiveContentReplacer === 'undefined') {
       }
     }
 
-    safeReplaceTextNode(textNode, originalText, transformedText, service = 'AI') {
+    safeReplaceTextNode(textNode, originalText, transformedText, service = 'AI', metrics = {}) {
       try {
         // 创建高亮的 HTML 内容
         const highlightedHTML = this.createAIHighlight(originalText, transformedText, service);
@@ -425,11 +431,19 @@ if (typeof window.PositiveContentReplacer === 'undefined') {
 
         this.replaceCount++;
 
-        // 通知 background script 更新计数
+        // 通知 background script 更新计数和详细指标
         if (this.isExtensionContextValid()) {
           chrome.runtime.sendMessage({
             action: 'updateReplaceCount',
-            count: 1
+            count: 1,
+            metrics: {
+              originalText: originalText.substring(0, 200), // Limit length
+              transformedText: transformedText.substring(0, 200),
+              toxicityScore: metrics.toxicityScore || 0,
+              aiService: service,
+              promptType: this.systemPromptKey || 'DEFAULT',
+              processingTime: metrics.processingTime || 0
+            }
           }).catch(() => {
             // Ignore errors
           });

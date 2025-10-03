@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Positive Content Replacer - AI 驱动的正能量转换器</title>
+    <title>Positive Content Replacer - AI-Powered Positive Content Transformer</title>
     <style>
         * {
             margin: 0;
@@ -13,12 +13,25 @@
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #e8f5e8 100%);
+            background: linear-gradient(135deg, #000000 0%, #0f0f23 50%, #1a0b2e 100%);
             min-height: 100vh;
             overflow-x: hidden;
+            color: #ffffff;
         }
 
-        /* 动画背景 */
+        /* Header banner */
+        .header-banner {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 160px;
+            z-index: 999;
+            background: url('icons/showcaseHeader.png') center/cover no-repeat;
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.3);
+        }
+
+        /* Animated background */
         .bg-animation {
             position: fixed;
             top: 0;
@@ -26,7 +39,7 @@
             width: 100%;
             height: 100%;
             z-index: -1;
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #e8f5e8 100%);
+            background: linear-gradient(135deg, #000000 0%, #0f0f23 50%, #1a0b2e 100%);
         }
 
         .bg-animation::before {
@@ -36,7 +49,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(76,175,80,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(76,175,80,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(76,175,80,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(76,175,80,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(76,175,80,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(255,107,53,0.3)"/><circle cx="75" cy="75" r="1" fill="rgba(255,69,0,0.3)"/><circle cx="50" cy="10" r="0.5" fill="rgba(255,107,53,0.2)"/><circle cx="10" cy="60" r="0.5" fill="rgba(255,69,0,0.2)"/><circle cx="90" cy="40" r="0.5" fill="rgba(255,107,53,0.2)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
             animation: float 20s ease-in-out infinite;
         }
 
@@ -45,17 +58,17 @@
             50% { transform: translateY(-20px) rotate(1deg); }
         }
 
-        /* 导航栏 */
+        /* Navigation bar */
         .navbar {
             position: fixed;
-            top: 0;
+            top: 160px;
             width: 100%;
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(20px);
             z-index: 1000;
             padding: 1rem 0;
             transition: all 0.3s ease;
-            border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+            box-shadow: 0 4px 20px rgba(255, 107, 53, 0.2);
         }
 
         .nav-container {
@@ -70,8 +83,27 @@
         .logo {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #2e7d32;
+            color: #ff6b35;
             text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-shadow: 0 0 15px rgba(255, 107, 53, 0.8), 0 0 30px rgba(255, 107, 53, 0.4);
+        }
+
+        .logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ff6b35;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.6);
+        }
+
+        .logo:hover img {
+            transform: scale(1.1);
+            box-shadow: 0 4px 25px rgba(255, 107, 53, 0.8);
         }
 
         .nav-links {
@@ -81,10 +113,12 @@
         }
 
         .nav-links a {
-            color: #2e7d32;
+            color: #ffffff;
             text-decoration: none;
             transition: all 0.3s ease;
             position: relative;
+            text-shadow: 0 0 8px rgba(255, 107, 53, 0.4);
+            font-weight: 600;
         }
 
         .nav-links a::after {
@@ -93,31 +127,39 @@
             bottom: -5px;
             left: 0;
             width: 0;
-            height: 2px;
-            background: #4CAF50;
+            height: 3px;
+            background: linear-gradient(90deg, #ff6b35, #ff4500);
             transition: width 0.3s ease;
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.6);
         }
 
         .nav-links a:hover::after {
             width: 100%;
         }
 
-        /* 主要内容 */
+        .nav-links a:hover {
+            color: #ff6b35;
+            text-shadow: 0 0 15px rgba(255, 107, 53, 0.8);
+        }
+
+        /* Main content */
         .container {
             max-width: 1200px;
             margin: 0 auto;
             padding: 0 2rem;
         }
 
-        /* 英雄区域 */
+        /* Hero section */
         .hero {
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
-            color: #2e7d32;
+            color: #ffffff;
             position: relative;
+            background: radial-gradient(ellipse at center, rgba(255, 107, 53, 0.15) 0%, transparent 70%);
+            margin-top: 240px;
         }
 
         .hero-content {
@@ -125,14 +167,39 @@
             animation: fadeInUp 1s ease-out;
         }
 
+        .hero-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 4px solid #ff6b35;
+            margin: 0 auto 2rem;
+            display: block;
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.6), 0 0 60px rgba(255, 107, 53, 0.3);
+            transition: all 0.3s ease;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+
+        .hero-logo:hover {
+            transform: scale(1.05);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.8), 0 0 80px rgba(255, 107, 53, 0.4);
+        }
+
+        @keyframes logoFloat {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
         .hero h1 {
             font-size: 4rem;
             margin-bottom: 1rem;
-            background: linear-gradient(45deg, #4CAF50, #2e7d32, #1b5e20);
+            background: linear-gradient(45deg, #ff6b35, #ff4500, #ff8c00);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: gradientShift 3s ease-in-out infinite;
+            text-shadow: 0 0 40px rgba(255, 107, 53, 0.8);
+            font-weight: 900;
         }
 
         @keyframes gradientShift {
@@ -143,40 +210,50 @@
         .hero p {
             font-size: 1.5rem;
             margin-bottom: 2rem;
-            opacity: 0.8;
-            color: #4e7c5a;
+            opacity: 0.95;
+            color: #ffffff;
+            text-shadow: 0 0 15px rgba(255, 107, 53, 0.4);
+            font-weight: 500;
         }
 
         .cta-button {
             display: inline-block;
             padding: 1rem 2rem;
-            background: linear-gradient(45deg, #4CAF50, #2e7d32);
+            background: linear-gradient(45deg, #ff6b35, #ff4500);
             color: white;
             text-decoration: none;
             border-radius: 50px;
             font-weight: bold;
             transition: all 0.3s ease;
-            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+            box-shadow: 0 10px 30px rgba(255, 107, 53, 0.6);
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+            border: 2px solid #ff6b35;
         }
 
         .cta-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(76, 175, 80, 0.4);
+            box-shadow: 0 15px 40px rgba(255, 107, 53, 0.8);
+            background: linear-gradient(45deg, #ff8c00, #ff6b35);
+            border: 2px solid #ff8c00;
         }
 
-        /* 功能展示区域 */
+        /* Features section */
         .features {
             padding: 5rem 0;
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(20px);
+            border-top: 1px solid rgba(255, 107, 53, 0.3);
+            border-bottom: 1px solid rgba(255, 107, 53, 0.3);
         }
 
         .section-title {
             text-align: center;
             font-size: 3rem;
-            color: #2e7d32;
+            color: #ff6b35;
             margin-bottom: 3rem;
             position: relative;
+            text-shadow: 0 0 25px rgba(255, 107, 53, 0.8), 0 0 50px rgba(255, 107, 53, 0.4);
+            font-weight: 900;
         }
 
         .section-title::after {
@@ -185,10 +262,11 @@
             bottom: -10px;
             left: 50%;
             transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(45deg, #4CAF50, #2e7d32);
-            border-radius: 2px;
+            width: 120px;
+            height: 5px;
+            background: linear-gradient(45deg, #ff6b35, #ff4500);
+            border-radius: 3px;
+            box-shadow: 0 0 15px rgba(255, 107, 53, 0.6);
         }
 
         .features-grid {
@@ -199,20 +277,21 @@
         }
 
         .feature-card {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 2rem;
             text-align: center;
-            color: #2e7d32;
+            color: #ffffff;
             transition: all 0.3s ease;
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
         }
 
         .feature-card:hover {
             transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(76, 175, 80, 0.2);
+            box-shadow: 0 20px 40px rgba(255, 107, 53, 0.5);
+            border: 1px solid rgba(255, 107, 53, 0.7);
         }
 
         .feature-icon {
@@ -224,13 +303,17 @@
         .feature-card h3 {
             font-size: 1.5rem;
             margin-bottom: 1rem;
-            color: #4CAF50;
+            color: #ff6b35;
+            text-shadow: 0 0 15px rgba(255, 107, 53, 0.7);
+            font-weight: 700;
         }
 
-        /* 演示区域 */
+        /* Demo section */
         .demo {
             padding: 5rem 0;
-            background: rgba(232, 245, 232, 0.5);
+            background: rgba(10, 10, 10, 0.8);
+            border-top: 1px solid rgba(255, 107, 53, 0.3);
+            border-bottom: 1px solid rgba(255, 107, 53, 0.3);
         }
 
         .demo-container {
@@ -241,34 +324,38 @@
         }
 
         .demo-text {
-            color: #2e7d32;
+            color: #ffffff;
         }
 
         .demo-text h2 {
             font-size: 2.5rem;
             margin-bottom: 1rem;
-            color: #4CAF50;
+            color: #ff6b35;
+            text-shadow: 0 0 20px rgba(255, 107, 53, 0.8);
+            font-weight: 800;
         }
 
         .demo-text p {
             font-size: 1.2rem;
             margin-bottom: 2rem;
-            opacity: 0.8;
+            opacity: 0.95;
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 107, 53, 0.3);
         }
 
         .demo-box {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(20px);
             border-radius: 20px;
             padding: 2rem;
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.4);
+            box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
         }
 
         .demo-text-content {
             font-size: 1.1rem;
             line-height: 1.8;
-            color: #2e7d32;
+            color: #ffffff;
         }
 
         .demo-text-content .negative {
@@ -280,17 +367,20 @@
         }
 
         .demo-text-content .positive {
-            background: rgba(76, 175, 80, 0.2);
+            background: rgba(255, 107, 53, 0.4);
             padding: 2px 6px;
             border-radius: 4px;
-            color: #2e7d32;
+            color: #ff6b35;
             font-weight: bold;
+            text-shadow: 0 0 8px rgba(255, 107, 53, 0.6);
         }
 
-        /* 技术栈 */
+        /* Tech stack */
         .tech-stack {
             padding: 5rem 0;
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(0, 0, 0, 0.6);
+            border-top: 1px solid rgba(255, 107, 53, 0.3);
+            border-bottom: 1px solid rgba(255, 107, 53, 0.3);
         }
 
         .tech-grid {
@@ -301,30 +391,36 @@
         }
 
         .tech-item {
-            background: rgba(255, 255, 255, 0.9);
-            backdrop-filter: blur(10px);
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(20px);
             border-radius: 15px;
             padding: 1.5rem;
             text-align: center;
-            color: #2e7d32;
+            color: #ffffff;
             transition: all 0.3s ease;
-            border: 1px solid rgba(76, 175, 80, 0.3);
-            box-shadow: 0 3px 10px rgba(76, 175, 80, 0.1);
+            border: 1px solid rgba(255, 107, 53, 0.4);
+            box-shadow: 0 3px 10px rgba(255, 107, 53, 0.3);
         }
 
         .tech-item:hover {
             transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 107, 53, 0.5);
+            border: 1px solid rgba(255, 107, 53, 0.7);
         }
 
         .tech-item h4 {
-            color: #4CAF50;
+            color: #ff6b35;
             margin-bottom: 0.5rem;
+            text-shadow: 0 0 12px rgba(255, 107, 53, 0.7);
+            font-weight: 700;
         }
 
-        /* 统计区域 */
+        /* Statistics section */
         .stats {
             padding: 5rem 0;
-            background: rgba(232, 245, 232, 0.5);
+            background: rgba(10, 10, 10, 0.8);
+            border-top: 1px solid rgba(255, 107, 53, 0.3);
+            border-bottom: 1px solid rgba(255, 107, 53, 0.3);
         }
 
         .stats-grid {
@@ -335,27 +431,31 @@
         }
 
         .stat-item {
-            color: #2e7d32;
+            color: #ffffff;
         }
 
         .stat-number {
             font-size: 3rem;
             font-weight: bold;
-            color: #4CAF50;
+            color: #ff6b35;
             display: block;
+            text-shadow: 0 0 25px rgba(255, 107, 53, 0.8);
         }
 
         .stat-label {
             font-size: 1.2rem;
-            opacity: 0.9;
+            opacity: 0.95;
+            color: #ffffff;
+            text-shadow: 0 0 8px rgba(255, 107, 53, 0.3);
         }
 
-        /* 页脚 */
+        /* Footer */
         .footer {
-            background: rgba(46, 125, 50, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             padding: 3rem 0;
             text-align: center;
             color: white;
+            border-top: 1px solid rgba(255, 107, 53, 0.4);
         }
 
         .footer-content {
@@ -366,8 +466,10 @@
         }
 
         .footer-section h3 {
-            color: #a5d6a7;
+            color: #ff6b35;
             margin-bottom: 1rem;
+            text-shadow: 0 0 15px rgba(255, 107, 53, 0.7);
+            font-weight: 700;
         }
 
         .footer-section a {
@@ -379,10 +481,28 @@
         }
 
         .footer-section a:hover {
-            color: #a5d6a7;
+            color: #ff6b35;
+            text-shadow: 0 0 8px rgba(255, 107, 53, 0.8);
         }
 
-        /* 动画 */
+        .footer-logo {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid #ff6b35;
+            margin: 0 auto 1rem;
+            display: block;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 20px rgba(255, 107, 53, 0.6);
+        }
+
+        .footer-logo:hover {
+            transform: scale(1.1);
+            box-shadow: 0 4px 25px rgba(255, 107, 53, 0.8);
+        }
+
+        /* Animations */
         @keyframes fadeInUp {
             from {
                 opacity: 0;
@@ -398,7 +518,7 @@
             animation: fadeInUp 0.8s ease-out;
         }
 
-        /* 响应式设计 */
+        /* Responsive design */
         @media (max-width: 768px) {
             .hero h1 {
                 font-size: 2.5rem;
@@ -406,6 +526,21 @@
             
             .hero p {
                 font-size: 1.2rem;
+            }
+            
+            .hero-logo {
+                width: 80px;
+                height: 80px;
+            }
+            
+            .logo img {
+                width: 24px;
+                height: 24px;
+            }
+            
+            .footer-logo {
+                width: 30px;
+                height: 30px;
             }
             
             .demo-container {
@@ -417,113 +552,122 @@
             }
         }
 
-        /* 滚动条样式 */
+        /* Scrollbar styles */
         ::-webkit-scrollbar {
             width: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: rgba(76, 175, 80, 0.1);
+            background: rgba(255, 107, 53, 0.1);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: linear-gradient(45deg, #4CAF50, #2e7d32);
+            background: linear-gradient(45deg, #ff6b35, #ff4500);
             border-radius: 4px;
+            box-shadow: 0 0 8px rgba(255, 107, 53, 0.4);
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: linear-gradient(45deg, #2e7d32, #1b5e20);
+            background: linear-gradient(45deg, #ff4500, #ff8c00);
+            box-shadow: 0 0 12px rgba(255, 107, 53, 0.6);
         }
     </style>
 </head>
 <body>
-    <!-- 动画背景 -->
+    <!-- Animated background -->
     <div class="bg-animation"></div>
 
-    <!-- 导航栏 -->
+    <!-- Header banner -->
+    <div class="header-banner"></div>
+
+    <!-- Navigation bar -->
     <nav class="navbar">
         <div class="nav-container">
-            <a href="#" class="logo">🌟 Positive Replacer</a>
+            <a href="#" class="logo">
+                <img src="icons/dog.jpg" alt="Positive Replacer Logo">
+                Positive Replacer
+            </a>
             <ul class="nav-links">
-                <li><a href="#features">功能</a></li>
-                <li><a href="#demo">演示</a></li>
-                <li><a href="#tech">技术</a></li>
-                <li><a href="#stats">统计</a></li>
+                <li><a href="#features">Features</a></li>
+                <li><a href="#demo">Demo</a></li>
+                <li><a href="#tech">Technology</a></li>
+                <li><a href="#stats">Statistics</a></li>
             </ul>
         </div>
     </nav>
 
-    <!-- 英雄区域 -->
+    <!-- Hero section -->
     <section class="hero">
         <div class="container">
             <div class="hero-content">
+                <img src="icons/dog.jpg" alt="Positive Replacer Logo" class="hero-logo">
                 <h1>Positive Content Replacer</h1>
-                <p>AI 驱动的智能内容转换器，让网络世界更加积极向上</p>
-                <a href="#demo" class="cta-button">立即体验</a>
+                <p>AI-powered intelligent content transformer that makes the web world more positive and uplifting</p>
+                <a href="#demo" class="cta-button">Try Now</a>
             </div>
         </div>
     </section>
 
-    <!-- 功能展示 -->
+    <!-- Features section -->
     <section class="features" id="features">
         <div class="container">
-            <h2 class="section-title">核心功能</h2>
+            <h2 class="section-title">Core Features</h2>
             <div class="features-grid">
                 <div class="feature-card fade-in">
                     <span class="feature-icon">🤖</span>
-                    <h3>AI 智能转换</h3>
-                    <p>基于 OpenAI GPT 和 Hugging Face 的先进 AI 技术，智能识别并转换负面内容为积极正面的表达</p>
+                    <h3>AI Smart Conversion</h3>
+                    <p>Advanced AI technology based on OpenAI GPT and Hugging Face, intelligently identifying and converting negative content into positive expressions</p>
                 </div>
                 <div class="feature-card fade-in">
                     <span class="feature-icon">⚡</span>
-                    <h3>实时处理</h3>
-                    <p>实时监控网页内容变化，自动检测并转换新出现的负面词汇，无需手动刷新</p>
+                    <h3>Real-time Processing</h3>
+                    <p>Real-time monitoring of web content changes, automatically detecting and converting newly appearing negative words without manual refresh</p>
                 </div>
                 <div class="feature-card fade-in">
                     <span class="feature-icon">🎨</span>
-                    <h3>悬停预览</h3>
-                    <p>鼠标悬停即可查看原始内容，移开鼠标显示转换后的积极内容，体验流畅自然</p>
+                    <h3>Hover Preview</h3>
+                    <p>Hover to view original content, move away to show converted positive content, providing a smooth and natural experience</p>
                 </div>
                 <div class="feature-card fade-in">
                     <span class="feature-icon">🔧</span>
-                    <h3>自定义配置</h3>
-                    <p>支持自定义词汇替换规则，灵活配置转换策略，满足个性化需求</p>
+                    <h3>Custom Configuration</h3>
+                    <p>Support for custom word replacement rules, flexible configuration of conversion strategies to meet personalized needs</p>
                 </div>
                 <div class="feature-card fade-in">
                     <span class="feature-icon">🌐</span>
-                    <h3>全站支持</h3>
-                    <p>支持所有网站，包括社交媒体、新闻网站、论坛等，让整个网络环境更加积极</p>
+                    <h3>Universal Support</h3>
+                    <p>Supports all websites including social media, news sites, forums, etc., making the entire online environment more positive</p>
                 </div>
                 <div class="feature-card fade-in">
                     <span class="feature-icon">📊</span>
-                    <h3>统计追踪</h3>
-                    <p>实时统计转换次数，追踪使用效果，让您了解扩展带来的积极影响</p>
+                    <h3>Statistics Tracking</h3>
+                    <p>Real-time statistics of conversion counts, tracking usage effectiveness, helping you understand the positive impact of the extension</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 演示区域 -->
+    <!-- Demo section -->
     <section class="demo" id="demo">
         <div class="container">
             <div class="demo-container">
                 <div class="demo-text">
-                    <h2>实时转换演示</h2>
-                    <p>我们的 AI 系统能够智能识别负面内容，并将其转换为积极正面的表达。以下是一个简单的演示：</p>
+                    <h2>Real-time Conversion Demo</h2>
+                    <p>Our AI system can intelligently identify negative content and convert it into positive expressions. Here's a simple demonstration:</p>
                     <ul style="margin-top: 1rem; padding-left: 1.5rem;">
-                        <li>智能识别负面词汇</li>
-                        <li>AI 生成积极替代词</li>
-                        <li>保持语义连贯性</li>
-                        <li>支持多语言处理</li>
+                        <li>Intelligent identification of negative words</li>
+                        <li>AI-generated positive alternatives</li>
+                        <li>Maintaining semantic coherence</li>
+                        <li>Multi-language processing support</li>
                     </ul>
                 </div>
                 <div class="demo-box">
-                    <h3 style="color: #4CAF50; margin-bottom: 1rem;">转换示例</h3>
+                    <h3 style="color: #ff6b35; margin-bottom: 1rem; text-shadow: 0 0 15px rgba(255, 107, 53, 0.7); font-weight: 700;">Conversion Example</h3>
                     <div class="demo-text-content">
-                        <p>原始内容：</p>
+                        <p>Original content:</p>
                         <p>"This is a <span class="negative">terrible</span> movie. I <span class="negative">hate</span> it so much. The acting is <span class="negative">awful</span> and the plot is <span class="negative">stupid</span>."</p>
                         <br>
-                        <p>转换后：</p>
+                        <p>After conversion:</p>
                         <p>"This is a <span class="positive">wonderful</span> movie. I <span class="positive">love</span> it so much. The acting is <span class="positive">amazing</span> and the plot is <span class="positive">brilliant</span>."</p>
                     </div>
                 </div>
@@ -531,75 +675,76 @@
         </div>
     </section>
 
-    <!-- 技术栈 -->
+    <!-- Tech stack -->
     <section class="tech-stack" id="tech">
         <div class="container">
-            <h2 class="section-title">技术架构</h2>
+            <h2 class="section-title">Technology Stack</h2>
             <div class="tech-grid">
                 <div class="tech-item fade-in">
                     <h4>Chrome Extension</h4>
-                    <p>基于 Manifest V3 的现代浏览器扩展</p>
+                    <p>Modern browser extension based on Manifest V3</p>
                 </div>
                 <div class="tech-item fade-in">
                     <h4>OpenAI GPT</h4>
-                    <p>先进的自然语言处理模型</p>
+                    <p>Advanced natural language processing model</p>
                 </div>
                 <div class="tech-item fade-in">
                     <h4>Hugging Face</h4>
-                    <p>开源 AI 模型和 API 服务</p>
+                    <p>Open-source AI models and API services</p>
                 </div>
                 <div class="tech-item fade-in">
                     <h4>JavaScript</h4>
-                    <p>现代 ES6+ 语法和异步处理</p>
+                    <p>Modern ES6+ syntax and asynchronous processing</p>
                 </div>
                 <div class="tech-item fade-in">
-                    <h4>DOM 操作</h4>
-                    <p>高效的实时内容监控和替换</p>
+                    <h4>DOM Manipulation</h4>
+                    <p>Efficient real-time content monitoring and replacement</p>
                 </div>
                 <div class="tech-item fade-in">
-                    <h4>CSS3 动画</h4>
-                    <p>流畅的用户界面和交互效果</p>
+                    <h4>CSS3 Animations</h4>
+                    <p>Smooth user interface and interaction effects</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 统计区域 -->
+    <!-- Statistics section -->
     <section class="stats" id="stats">
         <div class="container">
-            <h2 class="section-title">项目数据</h2>
+            <h2 class="section-title">Project Data</h2>
             <div class="stats-grid">
                 <div class="stat-item fade-in">
                     <span class="stat-number" id="wordCount">1000+</span>
-                    <span class="stat-label">支持词汇</span>
+                    <span class="stat-label">Supported Words</span>
                 </div>
                 <div class="stat-item fade-in">
                     <span class="stat-number" id="siteCount">∞</span>
-                    <span class="stat-label">支持网站</span>
+                    <span class="stat-label">Supported Sites</span>
                 </div>
                 <div class="stat-item fade-in">
                     <span class="stat-number" id="aiModel">2</span>
-                    <span class="stat-label">AI 模型</span>
+                    <span class="stat-label">AI Models</span>
                 </div>
                 <div class="stat-item fade-in">
                     <span class="stat-number" id="languageCount">10+</span>
-                    <span class="stat-label">支持语言</span>
+                    <span class="stat-label">Supported Languages</span>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- 页脚 -->
+    <!-- Footer -->
     <footer class="footer">
         <div class="container">
             <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 2rem; margin-top: 2rem;">
-                <p>&copy; 2025 Positive Content Replacer. 让网络世界更加积极向上 🌟</p>
+                <img src="icons/dog.jpg" alt="Positive Replacer Logo" class="footer-logo">
+                <p>&copy; 2025 Positive Content Replacer. Making the web world more positive and uplifting 🌟</p>
             </div>
         </div>
     </footer>
 
     <script>
-        // 平滑滚动
+        // Smooth scrolling
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
@@ -613,17 +758,17 @@
             });
         });
 
-        // 导航栏滚动效果
+        // Navbar scroll effect
         window.addEventListener('scroll', () => {
             const navbar = document.querySelector('.navbar');
             if (window.scrollY > 100) {
-                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+                navbar.style.background = 'rgba(0, 0, 0, 0.95)';
             } else {
-                navbar.style.background = 'rgba(255, 255, 255, 0.9)';
+                navbar.style.background = 'rgba(0, 0, 0, 0.9)';
             }
         });
 
-        // 数字动画
+        // Number animation
         function animateNumbers() {
             const numbers = document.querySelectorAll('.stat-number');
             numbers.forEach(number => {
@@ -643,7 +788,7 @@
             });
         }
 
-        // 滚动动画
+        // Scroll animation
         const observerOptions = {
             threshold: 0.1,
             rootMargin: '0px 0px -50px 0px'
@@ -664,31 +809,9 @@
             observer.observe(el);
         });
 
-        // 鼠标跟随效果
-        document.addEventListener('mousemove', (e) => {
-            const cursor = document.querySelector('.cursor');
-            if (!cursor) {
-                const newCursor = document.createElement('div');
-                newCursor.className = 'cursor';
-                newCursor.style.cssText = `
-                    position: fixed;
-                    width: 20px;
-                    height: 20px;
-                    background: radial-gradient(circle, rgba(76,175,80,0.8) 0%, rgba(46,125,50,0.4) 100%);
-                    border-radius: 50%;
-                    pointer-events: none;
-                    z-index: 9999;
-                    transition: transform 0.1s ease;
-                `;
-                document.body.appendChild(newCursor);
-            }
-            
-            const cursorEl = document.querySelector('.cursor');
-            cursorEl.style.left = e.clientX - 10 + 'px';
-            cursorEl.style.top = e.clientY - 10 + 'px';
-        });
+        // Mouse follow effect removed
 
-        // 添加一些动态效果
+        // Add some dynamic effects
         setInterval(() => {
             const cards = document.querySelectorAll('.feature-card');
             cards.forEach(card => {

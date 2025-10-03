@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Positive Content Replacer - AI 驱动的正能量转换器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #e8f5e8 100%);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* 动画背景 */
+        .bg-animation {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 50%, #e8f5e8 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grain" width="100" height="100" patternUnits="userSpaceOnUse"><circle cx="25" cy="25" r="1" fill="rgba(76,175,80,0.1)"/><circle cx="75" cy="75" r="1" fill="rgba(76,175,80,0.1)"/><circle cx="50" cy="10" r="0.5" fill="rgba(76,175,80,0.05)"/><circle cx="10" cy="60" r="0.5" fill="rgba(76,175,80,0.05)"/><circle cx="90" cy="40" r="0.5" fill="rgba(76,175,80,0.05)"/></pattern></defs><rect width="100" height="100" fill="url(%23grain)"/></svg>');
+            animation: float 20s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(1deg); }
+        }
+
+        /* 导航栏 */
+        .navbar {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 1rem 0;
+            transition: all 0.3s ease;
+            border-bottom: 1px solid rgba(76, 175, 80, 0.2);
+        }
+
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 2rem;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #2e7d32;
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: #2e7d32;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: #4CAF50;
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        /* 主要内容 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+
+        /* 英雄区域 */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #2e7d32;
+            position: relative;
+        }
+
+        .hero-content {
+            max-width: 800px;
+            animation: fadeInUp 1s ease-out;
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, #4CAF50, #2e7d32, #1b5e20);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradientShift 3s ease-in-out infinite;
+        }
+
+        @keyframes gradientShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+
+        .hero p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+            color: #4e7c5a;
+        }
+
+        .cta-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(45deg, #4CAF50, #2e7d32);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(76, 175, 80, 0.3);
+        }
+
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(76, 175, 80, 0.4);
+        }
+
+        /* 功能展示区域 */
+        .features {
+            padding: 5rem 0;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 3rem;
+            color: #2e7d32;
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 4px;
+            background: linear-gradient(45deg, #4CAF50, #2e7d32);
+            border-radius: 2px;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .feature-card {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            color: #2e7d32;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.1);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(76, 175, 80, 0.2);
+        }
+
+        .feature-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+        }
+
+        .feature-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            color: #4CAF50;
+        }
+
+        /* 演示区域 */
+        .demo {
+            padding: 5rem 0;
+            background: rgba(232, 245, 232, 0.5);
+        }
+
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .demo-text {
+            color: #2e7d32;
+        }
+
+        .demo-text h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            color: #4CAF50;
+        }
+
+        .demo-text p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        .demo-box {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.1);
+        }
+
+        .demo-text-content {
+            font-size: 1.1rem;
+            line-height: 1.8;
+            color: #2e7d32;
+        }
+
+        .demo-text-content .negative {
+            background: rgba(244, 67, 54, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        .demo-text-content .positive {
+            background: rgba(76, 175, 80, 0.2);
+            padding: 2px 6px;
+            border-radius: 4px;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        /* 技术栈 */
+        .tech-stack {
+            padding: 5rem 0;
+            background: rgba(255, 255, 255, 0.8);
+        }
+
+        .tech-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .tech-item {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            color: #2e7d32;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(76, 175, 80, 0.3);
+            box-shadow: 0 3px 10px rgba(76, 175, 80, 0.1);
+        }
+
+        .tech-item:hover {
+            transform: scale(1.05);
+        }
+
+        .tech-item h4 {
+            color: #4CAF50;
+            margin-bottom: 0.5rem;
+        }
+
+        /* 统计区域 */
+        .stats {
+            padding: 5rem 0;
+            background: rgba(232, 245, 232, 0.5);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+            text-align: center;
+        }
+
+        .stat-item {
+            color: #2e7d32;
+        }
+
+        .stat-number {
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4CAF50;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        /* 页脚 */
+        .footer {
+            background: rgba(46, 125, 50, 0.8);
+            padding: 3rem 0;
+            text-align: center;
+            color: white;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h3 {
+            color: #a5d6a7;
+            margin-bottom: 1rem;
+        }
+
+        .footer-section a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s ease;
+        }
+
+        .footer-section a:hover {
+            color: #a5d6a7;
+        }
+
+        /* 动画 */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .fade-in {
+            animation: fadeInUp 0.8s ease-out;
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 2.5rem;
+            }
+            
+            .hero p {
+                font-size: 1.2rem;
+            }
+            
+            .demo-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-links {
+                display: none;
+            }
+        }
+
+        /* 滚动条样式 */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(76, 175, 80, 0.1);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(45deg, #4CAF50, #2e7d32);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(45deg, #2e7d32, #1b5e20);
+        }
+    </style>
+</head>
+<body>
+    <!-- 动画背景 -->
+    <div class="bg-animation"></div>
+
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <a href="#" class="logo">🌟 Positive Replacer</a>
+            <ul class="nav-links">
+                <li><a href="#features">功能</a></li>
+                <li><a href="#demo">演示</a></li>
+                <li><a href="#tech">技术</a></li>
+                <li><a href="#stats">统计</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- 英雄区域 -->
+    <section class="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1>Positive Content Replacer</h1>
+                <p>AI 驱动的智能内容转换器，让网络世界更加积极向上</p>
+                <a href="#demo" class="cta-button">立即体验</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- 功能展示 -->
+    <section class="features" id="features">
+        <div class="container">
+            <h2 class="section-title">核心功能</h2>
+            <div class="features-grid">
+                <div class="feature-card fade-in">
+                    <span class="feature-icon">🤖</span>
+                    <h3>AI 智能转换</h3>
+                    <p>基于 OpenAI GPT 和 Hugging Face 的先进 AI 技术，智能识别并转换负面内容为积极正面的表达</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <span class="feature-icon">⚡</span>
+                    <h3>实时处理</h3>
+                    <p>实时监控网页内容变化，自动检测并转换新出现的负面词汇，无需手动刷新</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <span class="feature-icon">🎨</span>
+                    <h3>悬停预览</h3>
+                    <p>鼠标悬停即可查看原始内容，移开鼠标显示转换后的积极内容，体验流畅自然</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <span class="feature-icon">🔧</span>
+                    <h3>自定义配置</h3>
+                    <p>支持自定义词汇替换规则，灵活配置转换策略，满足个性化需求</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <span class="feature-icon">🌐</span>
+                    <h3>全站支持</h3>
+                    <p>支持所有网站，包括社交媒体、新闻网站、论坛等，让整个网络环境更加积极</p>
+                </div>
+                <div class="feature-card fade-in">
+                    <span class="feature-icon">📊</span>
+                    <h3>统计追踪</h3>
+                    <p>实时统计转换次数，追踪使用效果，让您了解扩展带来的积极影响</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 演示区域 -->
+    <section class="demo" id="demo">
+        <div class="container">
+            <div class="demo-container">
+                <div class="demo-text">
+                    <h2>实时转换演示</h2>
+                    <p>我们的 AI 系统能够智能识别负面内容，并将其转换为积极正面的表达。以下是一个简单的演示：</p>
+                    <ul style="margin-top: 1rem; padding-left: 1.5rem;">
+                        <li>智能识别负面词汇</li>
+                        <li>AI 生成积极替代词</li>
+                        <li>保持语义连贯性</li>
+                        <li>支持多语言处理</li>
+                    </ul>
+                </div>
+                <div class="demo-box">
+                    <h3 style="color: #4CAF50; margin-bottom: 1rem;">转换示例</h3>
+                    <div class="demo-text-content">
+                        <p>原始内容：</p>
+                        <p>"This is a <span class="negative">terrible</span> movie. I <span class="negative">hate</span> it so much. The acting is <span class="negative">awful</span> and the plot is <span class="negative">stupid</span>."</p>
+                        <br>
+                        <p>转换后：</p>
+                        <p>"This is a <span class="positive">wonderful</span> movie. I <span class="positive">love</span> it so much. The acting is <span class="positive">amazing</span> and the plot is <span class="positive">brilliant</span>."</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 技术栈 -->
+    <section class="tech-stack" id="tech">
+        <div class="container">
+            <h2 class="section-title">技术架构</h2>
+            <div class="tech-grid">
+                <div class="tech-item fade-in">
+                    <h4>Chrome Extension</h4>
+                    <p>基于 Manifest V3 的现代浏览器扩展</p>
+                </div>
+                <div class="tech-item fade-in">
+                    <h4>OpenAI GPT</h4>
+                    <p>先进的自然语言处理模型</p>
+                </div>
+                <div class="tech-item fade-in">
+                    <h4>Hugging Face</h4>
+                    <p>开源 AI 模型和 API 服务</p>
+                </div>
+                <div class="tech-item fade-in">
+                    <h4>JavaScript</h4>
+                    <p>现代 ES6+ 语法和异步处理</p>
+                </div>
+                <div class="tech-item fade-in">
+                    <h4>DOM 操作</h4>
+                    <p>高效的实时内容监控和替换</p>
+                </div>
+                <div class="tech-item fade-in">
+                    <h4>CSS3 动画</h4>
+                    <p>流畅的用户界面和交互效果</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 统计区域 -->
+    <section class="stats" id="stats">
+        <div class="container">
+            <h2 class="section-title">项目数据</h2>
+            <div class="stats-grid">
+                <div class="stat-item fade-in">
+                    <span class="stat-number" id="wordCount">1000+</span>
+                    <span class="stat-label">支持词汇</span>
+                </div>
+                <div class="stat-item fade-in">
+                    <span class="stat-number" id="siteCount">∞</span>
+                    <span class="stat-label">支持网站</span>
+                </div>
+                <div class="stat-item fade-in">
+                    <span class="stat-number" id="aiModel">2</span>
+                    <span class="stat-label">AI 模型</span>
+                </div>
+                <div class="stat-item fade-in">
+                    <span class="stat-number" id="languageCount">10+</span>
+                    <span class="stat-label">支持语言</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="footer">
+        <div class="container">
+            <div style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 2rem; margin-top: 2rem;">
+                <p>&copy; 2025 Positive Content Replacer. 让网络世界更加积极向上 🌟</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 100) {
+                navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+            } else {
+                navbar.style.background = 'rgba(255, 255, 255, 0.9)';
+            }
+        });
+
+        // 数字动画
+        function animateNumbers() {
+            const numbers = document.querySelectorAll('.stat-number');
+            numbers.forEach(number => {
+                const target = parseInt(number.textContent.replace(/\D/g, ''));
+                if (target && target > 0) {
+                    let current = 0;
+                    const increment = target / 50;
+                    const timer = setInterval(() => {
+                        current += increment;
+                        if (current >= target) {
+                            current = target;
+                            clearInterval(timer);
+                        }
+                        number.textContent = Math.floor(current) + (number.textContent.includes('+') ? '+' : '');
+                    }, 30);
+                }
+            });
+        }
+
+        // 滚动动画
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                    if (entry.target.closest('.stats')) {
+                        animateNumbers();
+                    }
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.feature-card, .tech-item, .stat-item').forEach(el => {
+            observer.observe(el);
+        });
+
+        // 鼠标跟随效果
+        document.addEventListener('mousemove', (e) => {
+            const cursor = document.querySelector('.cursor');
+            if (!cursor) {
+                const newCursor = document.createElement('div');
+                newCursor.className = 'cursor';
+                newCursor.style.cssText = `
+                    position: fixed;
+                    width: 20px;
+                    height: 20px;
+                    background: radial-gradient(circle, rgba(76,175,80,0.8) 0%, rgba(46,125,50,0.4) 100%);
+                    border-radius: 50%;
+                    pointer-events: none;
+                    z-index: 9999;
+                    transition: transform 0.1s ease;
+                `;
+                document.body.appendChild(newCursor);
+            }
+            
+            const cursorEl = document.querySelector('.cursor');
+            cursorEl.style.left = e.clientX - 10 + 'px';
+            cursorEl.style.top = e.clientY - 10 + 'px';
+        });
+
+        // 添加一些动态效果
+        setInterval(() => {
+            const cards = document.querySelectorAll('.feature-card');
+            cards.forEach(card => {
+                if (Math.random() < 0.1) {
+                    card.style.transform = 'translateY(-5px) scale(1.02)';
+                    setTimeout(() => {
+                        card.style.transform = 'translateY(0) scale(1)';
+                    }, 200);
+                }
+            });
+        }, 3000);
+    </script>
+</body>
+</html>

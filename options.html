@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    
+    .container {
+      background: white;
+      border-radius: 10px;
+      padding: 30px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    
+    .section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 1px solid #e0e0e0;
+      border-radius: 8px;
+    }
+    
+    .section h2 {
+      color: #555;
+      margin-top: 0;
+      font-size: 18px;
+    }
+    
+    .form-group {
+      margin-bottom: 20px;
+    }
+    
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+      color: #333;
+    }
+    
+    input[type="text"], textarea, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      font-size: 14px;
+      box-sizing: border-box;
+    }
+    
+    textarea {
+      height: 100px;
+      resize: vertical;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    
+    input[type="checkbox"] {
+      width: 18px;
+      height: 18px;
+    }
+    
+    .btn {
+      background: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 14px;
+      margin-right: 10px;
+    }
+    
+    .btn:hover {
+      background: #45a049;
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+    }
+    
+    .btn-secondary:hover {
+      background: #5a6268;
+    }
+    
+    .word-list {
+      max-height: 200px;
+      overflow-y: auto;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      padding: 10px;
+      background: #f9f9f9;
+    }
+    
+    .word-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+    
+    .word-item:last-child {
+      border-bottom: none;
+    }
+    
+    .remove-btn {
+      background: #dc3545;
+      color: white;
+      border: none;
+      padding: 5px 10px;
+      border-radius: 3px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+    
+    .remove-btn:hover {
+      background: #c82333;
+    }
+    
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 20px;
+    }
+    
+    .stat-card {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .stat-number {
+      font-size: 24px;
+      font-weight: bold;
+      color: #4CAF50;
+    }
+    
+    .stat-label {
+      color: #666;
+      margin-top: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>🌟 Positive Content Replacer - Settings</h1>
+    
+    <div class="section">
+      <h2>Basic Settings</h2>
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="isEnabled" checked>
+          <label for="isEnabled">Enable positive content replacement</label>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="sensitivity">Sensitivity Level</label>
+        <select id="sensitivity">
+          <option value="low">Low - Only replace obvious negative words</option>
+          <option value="medium" selected>Medium - Balance detection and false positives</option>
+          <option value="high">High - More aggressive replacement</option>
+        </select>
+      </div>
+      
+      <div class="form-group">
+        <div class="checkbox-group">
+          <input type="checkbox" id="showHighlight" checked>
+          <label for="showHighlight">Highlight replaced words</label>
+        </div>
+        <small style="color: #666; margin-left: 25px;">When enabled, replaced words will be highlighted with colored background, hover to see original words</small>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Custom Words</h2>
+      <div class="form-group">
+        <label for="negativeWord">Add negative word</label>
+        <input type="text" id="negativeWord" placeholder="Enter negative word to replace">
+      </div>
+      
+      <div class="form-group">
+        <label for="positiveWord">Corresponding positive word</label>
+        <input type="text" id="positiveWord" placeholder="Enter positive replacement word">
+      </div>
+      
+      <button class="btn" id="addWordBtn">Add Word</button>
+      
+      <div class="form-group">
+        <label>Current custom words list</label>
+        <div class="word-list" id="wordList">
+          <div class="word-item">
+            <span>No custom words yet</span>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="section">
+      <h2>Bulk Import</h2>
+      <div class="form-group">
+        <label for="bulkImport">Bulk import words (one per line, format: negative_word,positive_word)</label>
+        <textarea id="bulkImport" placeholder="hate,love&#10;stupid,clever&#10;ugly,beautiful"></textarea>
+      </div>
+      <button class="btn" id="importBtn">Import Words</button>
+    </div>
+    
+    <div class="section">
+      <h2>Statistics</h2>
+      <div class="stats">
+        <div class="stat-card">
+          <div class="stat-number" id="totalReplaces">0</div>
+          <div class="stat-label">Total Replacements</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="customWords">0</div>
+          <div class="stat-label">Custom Words</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="builtInWords">50+</div>
+          <div class="stat-label">Built-in Words</div>
+        </div>
+      </div>
+    </div>
+    
+    <div style="text-align: center; margin-top: 30px;">
+      <button class="btn" id="saveBtn">Save Settings</button>
+      <button class="btn btn-secondary" id="resetBtn">Reset to Default</button>
+    </div>
+  </div>
+  
+  <script src="options.js"></script>
+</body>
+</html>

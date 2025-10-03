@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Positive Content Replacer - Test Page</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+        
+        .test-section h2 {
+            color: #555;
+            margin-top: 0;
+        }
+        
+        .negative-text {
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+            border-left: 4px solid #f44336;
+        }
+        
+        .instruction {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .highlight {
+            background: #fff3e0;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 Positive Content Replacer Test Page</h1>
+        
+        <div class="instruction">
+            <strong>Instructions:</strong> After installing and enabling the extension, the negative words below should be automatically replaced with positive words. If you see the replacement effect, the extension is working properly!
+        </div>
+        
+        <div class="test-section">
+            <h2>Basic Negative Words Test</h2>
+            <div class="negative-text">
+                <p>This product is really <span class="highlight">terrible</span>, I think it's <span class="highlight">stupid</span>.</p>
+                <p>I'm very <span class="highlight">disappointed</span> with this result, it makes me <span class="highlight">angry</span>.</p>
+                <p>This idea is too <span class="highlight">boring</span>, I think it's <span class="highlight">useless</span>.</p>
+            </div>
+            <div class="instruction">
+                <strong>Highlight Effect:</strong> If the extension works properly, replaced words will be highlighted with colored background, hover to see original words. You can enable/disable highlight effect in settings.
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Emotion-related Words Test</h2>
+            <div class="negative-text">
+                <p>I feel very <span class="highlight">sad</span> and <span class="highlight">depressed</span>.</p>
+                <p>This situation makes me feel <span class="highlight">hopeless</span> and <span class="highlight">helpless</span>.</p>
+                <p>I feel <span class="highlight">worried</span> and <span class="highlight">anxious</span> about the future.</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Evaluation Words Test</h2>
+            <div class="negative-text">
+                <p>This design looks <span class="highlight">ugly</span> and the quality is <span class="highlight">bad</span>.</p>
+                <p>This solution is completely <span class="highlight">wrong</span> and will definitely <span class="highlight">fail</span>.</p>
+                <p>This decision is too <span class="highlight">stupid</span>, it's simply <span class="highlight">ridiculous</span>.</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Action Words Test</h2>
+            <div class="negative-text">
+                <p>This system always <span class="highlight">breaks</span> and frequently <span class="highlight">fails</span>.</p>
+                <p>We need to <span class="highlight">destroy</span> this old version and <span class="highlight">rebuild</span> it.</p>
+                <p>This error will <span class="highlight">ruin</span> the entire project.</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>State Words Test</h2>
+            <div class="negative-text">
+                <p>I feel very <span class="highlight">tired</span> and <span class="highlight">exhausted</span>.</p>
+                <p>This task is <span class="highlight">boring</span> and makes me feel <span class="highlight">bored</span>.</p>
+                <p>This result makes me feel <span class="highlight">disappointed</span>.</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Dynamic Content Test</h2>
+            <p>Click the button below to add new content containing negative words:</p>
+            <button onclick="addNegativeContent()" style="padding: 10px 20px; background: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer;">
+                Add Test Content
+            </button>
+            <div id="dynamic-content" style="margin-top: 15px;"></div>
+        </div>
+        
+        <div class="instruction">
+            <strong>Expected Results:</strong> If the extension works properly, all highlighted negative words above should be replaced with corresponding positive words. For example: "terrible" → "wonderful", "stupid" → "clever".
+        </div>
+    </div>
+    
+    <script>
+        function addNegativeContent() {
+            const container = document.getElementById('dynamic-content');
+            const negativeTexts = [
+                "This is really <span class='highlight'>awful</span> and <span class='highlight'>terrible</span>!",
+                "I feel so <span class='highlight'>sad</span> and <span class='highlight'>depressed</span> about this.",
+                "This solution is completely <span class='highlight'>wrong</span> and will <span class='highlight'>fail</span>.",
+                "I'm so <span class='highlight'>angry</span> and <span class='highlight'>frustrated</span> right now.",
+                "This idea is totally <span class='highlight'>useless</span> and <span class='highlight'>pointless</span>."
+            ];
+            
+            const randomText = negativeTexts[Math.floor(Math.random() * negativeTexts.length)];
+            const div = document.createElement('div');
+            div.className = 'negative-text';
+            div.innerHTML = `<p>${randomText}</p>`;
+            container.appendChild(div);
+        }
+    </script>
+</body>
+</html>

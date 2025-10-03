@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extension Installation Verification</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .step {
+            margin: 20px 0;
+            padding: 15px;
+            border-left: 4px solid #007bff;
+            background: #f8f9fa;
+        }
+        
+        .test-content {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        
+        .highlight {
+            background: #fff3e0;
+            padding: 2px 4px;
+            border-radius: 3px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔧 Positive Content Replacer - Installation Verification</h1>
+        
+        <div class="info">
+            <h3>📋 Installation Checklist</h3>
+            <p>Please follow these steps to verify the extension is correctly installed:</p>
+        </div>
+        
+        <div class="step">
+            <h3>Step 1: Check File Structure</h3>
+            <p>Ensure the following files exist in the extension folder:</p>
+            <ul>
+                <li>✅ manifest.json</li>
+                <li>✅ content.js</li>
+                <li>✅ background.js</li>
+                <li>✅ popup.html</li>
+                <li>✅ popup.js</li>
+                <li>✅ options.html</li>
+                <li>✅ options.js</li>
+                <li>✅ welcome.html</li>
+                <li>✅ icons/icon16.png</li>
+                <li>✅ icons/icon48.png</li>
+                <li>✅ icons/icon128.png</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h3>Step 2: Load Extension in Chrome</h3>
+            <ol>
+                <li>Open Chrome browser</li>
+                <li>Enter in address bar: <code>chrome://extensions/</code></li>
+                <li>Make sure "Developer mode" is enabled in the top right</li>
+                <li>Click "Load unpacked extension"</li>
+                <li>Select the folder containing manifest.json</li>
+                <li>Click "Select folder"</li>
+            </ol>
+        </div>
+        
+        <div class="step">
+            <h3>Step 3: Verify Extension Status</h3>
+            <p>In the extensions page, you should see:</p>
+            <ul>
+                <li>Extension name: <strong>Positive Content Replacer</strong></li>
+                <li>Version: 1.0</li>
+                <li>Status: Enabled (switch is blue)</li>
+                <li>Icon: 🌟 star icon</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h3>Step 4: Test Extension Functionality</h3>
+            <p>If the extension is working properly, the negative words below should be replaced with positive words:</p>
+            
+            <div class="test-content">
+                <p>This product is really <span class="highlight">terrible</span>, I think it's <span class="highlight">stupid</span>.</p>
+                <p>I'm very <span class="highlight">disappointed</span> with this result, it makes me <span class="highlight">angry</span>.</p>
+                <p>This idea is too <span class="highlight">boring</span>, I think it's <span class="highlight">useless</span>.</p>
+            </div>
+            
+            <p><strong>Expected Results:</strong></p>
+            <ul>
+                <li>terrible → wonderful</li>
+                <li>stupid → clever</li>
+                <li>disappointed → pleased</li>
+                <li>angry → calm</li>
+                <li>boring → exciting</li>
+                <li>useless → useful</li>
+            </ul>
+        </div>
+        
+        <div class="step">
+            <h3>Step 5: Check Extension Interface</h3>
+            <ol>
+                <li>Click the extension icon in the browser toolbar</li>
+                <li>Extension control panel should pop up</li>
+                <li>Can enable/disable replacement function</li>
+                <li>Can click "Settings" to enter options page</li>
+            </ol>
+        </div>
+        
+        <div class="success" id="success-message" style="display: none;">
+            <h3>🎉 Congratulations! Extension installed successfully!</h3>
+            <p>If you see text replacement effects, the extension is working properly. Now you can:</p>
+            <ul>
+                <li>Visit any webpage, extension will work automatically</li>
+                <li>Add custom words in settings page</li>
+                <li>Adjust sensitivity levels</li>
+                <li>View replacement statistics</li>
+            </ul>
+        </div>
+        
+        <div class="error" id="error-message" style="display: none;">
+            <h3>❌ Extension may not be working properly</h3>
+            <p>If text is not being replaced, please check:</p>
+            <ul>
+                <li>Is the extension enabled?</li>
+                <li>Refresh the page and try again</li>
+                <li>Check Chrome console for error messages</li>
+                <li>Reinstall the extension</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <button onclick="checkPlugin()" style="padding: 10px 20px; background: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                Check Extension Status
+            </button>
+        </div>
+    </div>
+    
+    <script>
+        function checkPlugin() {
+            // Check if Chrome extension API is available
+            if (typeof chrome !== 'undefined' && chrome.runtime) {
+                document.getElementById('success-message').style.display = 'block';
+                document.getElementById('error-message').style.display = 'none';
+            } else {
+                // Check if text has been replaced
+                const testWords = ['terrible', 'stupid', 'disappointed', 'angry', 'boring', 'useless'];
+                const positiveWords = ['wonderful', 'clever', 'pleased', 'calm', 'exciting', 'useful'];
+                
+                let replaced = false;
+                testWords.forEach((word, index) => {
+                    if (document.body.textContent.includes(positiveWords[index])) {
+                        replaced = true;
+                    }
+                });
+                
+                if (replaced) {
+                    document.getElementById('success-message').style.display = 'block';
+                    document.getElementById('error-message').style.display = 'none';
+                } else {
+                    document.getElementById('success-message').style.display = 'none';
+                    document.getElementById('error-message').style.display = 'block';
+                }
+            }
+        }
+        
+        // Auto-check
+        setTimeout(checkPlugin, 1000);
+    </script>
+</body>
+</html>

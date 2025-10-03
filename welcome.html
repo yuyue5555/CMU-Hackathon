@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Welcome to Positive Content Replacer</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px 20px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      min-height: 100vh;
+      box-sizing: border-box;
+    }
+    
+    .container {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 40px;
+      text-align: center;
+      backdrop-filter: blur(10px);
+    }
+    
+    h1 {
+      font-size: 2.5em;
+      margin-bottom: 20px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+    
+    .emoji {
+      font-size: 4em;
+      margin: 20px 0;
+    }
+    
+    .description {
+      font-size: 1.2em;
+      line-height: 1.6;
+      margin: 30px 0;
+      opacity: 0.9;
+    }
+    
+    .features {
+      text-align: left;
+      margin: 30px 0;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 10px;
+    }
+    
+    .features h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    
+    .features ul {
+      list-style: none;
+      padding: 0;
+    }
+    
+    .features li {
+      padding: 8px 0;
+      padding-left: 25px;
+      position: relative;
+    }
+    
+    .features li:before {
+      content: "✨";
+      position: absolute;
+      left: 0;
+    }
+    
+    .btn {
+      background: rgba(255, 255, 255, 0.2);
+      color: white;
+      padding: 15px 30px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1.1em;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+      margin: 10px;
+      transition: all 0.3s;
+    }
+    
+    .btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-2px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+    }
+    
+    .footer {
+      margin-top: 40px;
+      font-size: 0.9em;
+      opacity: 0.8;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="emoji">🌟</div>
+    <h1>Welcome to Positive Content Replacer!</h1>
+    
+    <div class="description">
+      Make the web more positive! This extension automatically detects negative content on web pages and replaces it with positive, uplifting words.
+    </div>
+    
+    <div class="features">
+      <h3>Main Features</h3>
+      <ul>
+        <li>Automatically detect and replace negative words</li>
+        <li>Support custom word library</li>
+        <li>Real-time replacement statistics</li>
+        <li>Adjustable sensitivity settings</li>
+        <li>Support bulk word import</li>
+        <li>Beautiful user interface</li>
+      </ul>
+    </div>
+    
+    <div>
+      <a href="#" class="btn" id="startBtn">Get Started</a>
+      <a href="#" class="btn" id="settingsBtn">Open Settings</a>
+    </div>
+    
+    <div class="footer">
+      <p>Make every browsing experience positive! ✨</p>
+    </div>
+  </div>
+  
+  <script>
+    document.getElementById('startBtn').addEventListener('click', function() {
+      window.close();
+    });
+    
+    document.getElementById('settingsBtn').addEventListener('click', function() {
+      chrome.runtime.openOptionsPage();
+    });
+  </script>
+</body>
+</html>

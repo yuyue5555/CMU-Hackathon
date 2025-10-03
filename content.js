@@ -43,13 +43,18 @@ class PositiveContentReplacer {
       await chrome.storage.sync.set({ useAI: true });
       
       // 通知 background script 强制启用
-      chrome.runtime.sendMessage({ action: 'forceEnableAI' }).catch(() => {
-        // Ignore errors
-      });
+      if (this.isExtensionContextValid()) {
+        chrome.runtime.sendMessage({ action: 'forceEnableAI' }).catch(() => {
+          // Ignore errors
+        });
+      }
     }
     
     // Inject CSS styles
     this.injectStyles();
+    
+    // 添加悬停事件监听器
+    this.addHoverListeners();
     
     if (this.isEnabled) {
       this.startReplacement();
@@ -76,13 +81,15 @@ class PositiveContentReplacer {
         font-weight: 500 !important;
         color: #333 !important;
         text-decoration: none !important;
+        cursor: pointer !important;
       }
       
       .positive-replacement:hover {
         transform: translateY(-1px) !important;
         box-shadow: 0 3px 8px rgba(0,0,0,0.2) !important;
-        background: linear-gradient(120deg, #74b9ff 0%, #0984e3 100%) !important;
-        color: white !important;
+        background: white !important;
+        color: #dc3545 !important;
+        border: 2px solid #dc3545 !important;
       }
       
       .positive-replacement::before {
@@ -101,10 +108,20 @@ class PositiveContentReplacer {
         border: none !important;
         box-shadow: none !important;
         margin: 0 !important;
-        transition: none !important;
+        transition: all 0.3s ease !important;
         font-weight: normal !important;
         color: inherit !important;
         text-decoration: none !important;
+        cursor: pointer !important;
+      }
+      
+      .positive-replacement-no-highlight:hover {
+        background: white !important;
+        color: #dc3545 !important;
+        border: 2px solid #dc3545 !important;
+        padding: 2px 4px !important;
+        border-radius: 4px !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
       }
       
       .positive-replacement-no-highlight::before {
@@ -125,6 +142,13 @@ class PositiveContentReplacer {
       mutations.forEach((mutation) => {
         if (mutation.type === 'childList') {
           mutation.addedNodes.forEach((node) => {
+            // 跳过已经处理过的元素
+            if (node.nodeType === Node.ELEMENT_NODE && 
+                (node.classList.contains('positive-replacement') || 
+                 node.classList.contains('positive-replacement-no-highlight'))) {
+              return;
+            }
+            
             if (node.nodeType === Node.TEXT_NODE) {
               this.replaceTextInNode(node);
             } else if (node.nodeType === Node.ELEMENT_NODE) {
@@ -152,6 +176,13 @@ class PositiveContentReplacer {
       return;
     }
     
+    // Skip already processed elements
+    if (element.classList && 
+        (element.classList.contains('positive-replacement') || 
+         element.classList.contains('positive-replacement-no-highlight'))) {
+      return;
+    }
+    
     // Process text nodes
     if (element.nodeType === Node.TEXT_NODE) {
       this.replaceTextInNode(element);
@@ -168,6 +199,16 @@ class PositiveContentReplacer {
   async replaceTextInNode(textNode) {
     if (!textNode || textNode.nodeType !== Node.TEXT_NODE) return;
     
+    // 检查文本节点是否仍然在 DOM 中
+    if (!textNode.isConnected) {
+      return;
+    }
+    
+    // 检查是否已经处理过
+    if (textNode.dataset.processed) {
+      return;
+    }
+    
     const text = textNode.textContent.trim();
     
     // Skip empty or very short text
@@ -177,6 +218,9 @@ class PositiveContentReplacer {
     if (!this.containsNegativeKeywords(text)) {
       return;
     }
+    
+    // 标记为已处理
+    textNode.dataset.processed = 'true';
     
     // Use AI to transform the text
     await this.replaceWithAI(textNode, text);
@@ -192,8 +236,29 @@ class PositiveContentReplacer {
     return false;
   }
   
+  isExtensionContextValid() {
+    try {
+      // 尝试访问 chrome.runtime 来检查扩展上下文是否有效
+      return chrome.runtime && chrome.runtime.id;
+    } catch (error) {
+      return false;
+    }
+  }
+  
   async replaceWithAI(textNode, text) {
     try {
+      // 再次检查文本节点是否仍然有效
+      if (!textNode || !textNode.isConnected) {
+        console.log('文本节点已无效，跳过转换');
+        return;
+      }
+      
+      // 检查扩展上下文是否有效
+      if (!this.isExtensionContextValid()) {
+        console.log('扩展上下文已失效，跳过转换');
+        return;
+      }
+      
       console.log('开始 AI 转换:', text);
       
       // Call background script to transform text using AI
@@ -211,42 +276,14 @@ class PositiveContentReplacer {
         if (transformedText !== text && transformedText.length > 0) {
           console.log('转换成功:', text, '→', transformedText);
           
-          // Create highlighted HTML content
-          const service = response.service || this.aiService;
-          const highlightedHTML = this.createAIHighlight(text, transformedText, service);
-          
-          console.log('生成的 HTML:', highlightedHTML);
-          
-          // Create temporary container
-          const tempDiv = document.createElement('div');
-          tempDiv.innerHTML = highlightedHTML;
-          
-          // Replace text node
-          const parent = textNode.parentNode;
-          if (parent && parent.nodeType === Node.ELEMENT_NODE) {
-            try {
-              while (tempDiv.firstChild) {
-                parent.insertBefore(tempDiv.firstChild, textNode);
-              }
-              parent.removeChild(textNode);
-              
-              this.replaceCount++;
-              
-              // Notify background script to update count
-              chrome.runtime.sendMessage({
-                action: 'updateReplaceCount',
-                count: 1
-              }).catch(() => {
-                // Ignore errors
-              });
-            } catch (error) {
-              console.warn('DOM 操作失败:', error);
-              // 如果 DOM 操作失败，尝试直接替换文本内容
-              textNode.textContent = transformedText;
-            }
-          } else {
-            console.warn('无法找到有效的父节点');
+          // 最后一次检查文本节点是否仍然有效
+          if (!textNode || !textNode.isConnected) {
+            console.log('文本节点在转换过程中变为无效，跳过替换');
+            return;
           }
+          
+          // 使用安全的 DOM 替换方法
+          this.safeReplaceTextNode(textNode, text, transformedText, response.service);
         } else {
           console.log('转换结果相同，跳过替换');
         }
@@ -257,21 +294,85 @@ class PositiveContentReplacer {
         console.log('AI 转换无响应或失败');
       }
     } catch (error) {
+      if (error.message && error.message.includes('Extension context invalidated')) {
+        console.log('扩展上下文已失效，停止 AI 转换');
+        // 停止观察器，避免继续尝试
+        if (this.observer) {
+          this.observer.disconnect();
+          this.observer = null;
+        }
+        return;
+      }
       console.warn(`AI 转换异常:`, error);
     }
   }
   
+  safeReplaceTextNode(textNode, originalText, transformedText, service = 'AI') {
+    try {
+      // 创建高亮的 HTML 内容
+      const highlightedHTML = this.createAIHighlight(originalText, transformedText, service);
+      
+      // 创建临时容器
+      const tempDiv = document.createElement('div');
+      tempDiv.innerHTML = highlightedHTML;
+      
+      // 获取父节点
+      const parent = textNode.parentNode;
+      
+      // 检查父节点是否有效
+      if (!parent || parent.nodeType !== Node.ELEMENT_NODE || !parent.isConnected) {
+        console.warn('父节点无效，使用简单文本替换');
+        textNode.textContent = transformedText;
+        return;
+      }
+      
+      // 检查父节点是否仍在文档中
+      if (!document.contains(parent)) {
+        console.warn('父节点不在文档中，使用简单文本替换');
+        textNode.textContent = transformedText;
+        return;
+      }
+      
+      // 执行 DOM 替换
+      const fragment = document.createDocumentFragment();
+      while (tempDiv.firstChild) {
+        fragment.appendChild(tempDiv.firstChild);
+      }
+      
+      parent.insertBefore(fragment, textNode);
+      parent.removeChild(textNode);
+      
+      this.replaceCount++;
+      
+      // 通知 background script 更新计数
+      if (this.isExtensionContextValid()) {
+        chrome.runtime.sendMessage({
+          action: 'updateReplaceCount',
+          count: 1
+        }).catch(() => {
+          // Ignore errors
+        });
+      }
+      
+    } catch (error) {
+      console.warn('DOM 替换失败，使用简单文本替换:', error);
+      try {
+        textNode.textContent = transformedText;
+      } catch (textError) {
+        console.warn('简单文本替换也失败:', textError);
+      }
+    }
+  }
+  
   createAIHighlight(originalText, transformedText, service = 'AI') {
-    const serviceLabel = service === 'openai' ? 'OpenAI' : 
-                        service === 'huggingface' ? 'HuggingFace' : 'AI';
-    
-    // 简化 title 内容，避免 HTML 转义问题
-    const titleText = `${serviceLabel}转换: ${originalText}`;
+    // 创建可切换显示的内容
+    const originalEscaped = this.escapeHtml(originalText);
+    const transformedEscaped = this.escapeHtml(transformedText);
     
     if (this.showHighlight) {
-      return `<span class="positive-replacement" title="${titleText}">${this.escapeHtml(transformedText)}</span>`;
+      return `<span class="positive-replacement" data-original="${originalEscaped}" data-transformed="${transformedEscaped}" data-current="transformed">${transformedEscaped}</span>`;
     } else {
-      return `<span class="positive-replacement-no-highlight" title="${titleText}">${this.escapeHtml(transformedText)}</span>`;
+      return `<span class="positive-replacement-no-highlight" data-original="${originalEscaped}" data-transformed="${transformedEscaped}" data-current="transformed">${transformedEscaped}</span>`;
     }
   }
   
@@ -279,6 +380,37 @@ class PositiveContentReplacer {
     const div = document.createElement('div');
     div.textContent = text;
     return div.innerHTML;
+  }
+  
+  addHoverListeners() {
+    // 使用事件委托来处理动态添加的元素
+    document.addEventListener('mouseenter', (event) => {
+      const target = event.target;
+      if (target.classList.contains('positive-replacement') || target.classList.contains('positive-replacement-no-highlight')) {
+        // 检查当前状态，避免重复切换
+        if (target.dataset.current === 'original') return;
+        
+        const original = target.getAttribute('data-original');
+        if (original) {
+          target.textContent = original;
+          target.dataset.current = 'original';
+        }
+      }
+    }, true);
+    
+    document.addEventListener('mouseleave', (event) => {
+      const target = event.target;
+      if (target.classList.contains('positive-replacement') || target.classList.contains('positive-replacement-no-highlight')) {
+        // 检查当前状态，避免重复切换
+        if (target.dataset.current === 'transformed') return;
+        
+        const transformed = target.getAttribute('data-transformed');
+        if (transformed) {
+          target.textContent = transformed;
+          target.dataset.current = 'transformed';
+        }
+      }
+    }, true);
   }
   
   async toggle() {
@@ -319,24 +451,43 @@ const replacer = new PositiveContentReplacer();
 
 // Listen for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === 'toggle') {
-    replacer.toggle().then(() => {
-      sendResponse({ success: true, isEnabled: replacer.isEnabled });
-    });
-    return true; // Keep message channel open
-  } else if (request.action === 'getStatus') {
-    sendResponse({ isEnabled: replacer.isEnabled });
-  } else if (request.action === 'getReplaceCount') {
-    sendResponse({ count: replacer.replaceCount });
-  } else if (request.action === 'updateSettings') {
-    replacer.updateSettings(request.settings).then(() => {
-      sendResponse({ success: true });
-    });
-    return true; // Keep message channel open
-  } else if (request.action === 'enable') {
-    if (!replacer.isEnabled) {
-      replacer.toggle();
+  try {
+    // 检查扩展上下文是否有效
+    if (!chrome.runtime || !chrome.runtime.id) {
+      console.log('扩展上下文已失效，忽略消息');
+      return;
     }
-    sendResponse({ success: true });
+    
+    if (request.action === 'toggle') {
+      replacer.toggle().then(() => {
+        sendResponse({ success: true, isEnabled: replacer.isEnabled });
+      }).catch(error => {
+        console.warn('Toggle 失败:', error);
+        sendResponse({ success: false, error: error.message });
+      });
+      return true; // Keep message channel open
+    } else if (request.action === 'getStatus') {
+      sendResponse({ isEnabled: replacer.isEnabled });
+    } else if (request.action === 'getReplaceCount') {
+      sendResponse({ count: replacer.replaceCount });
+    } else if (request.action === 'updateSettings') {
+      replacer.updateSettings(request.settings).then(() => {
+        sendResponse({ success: true });
+      }).catch(error => {
+        console.warn('更新设置失败:', error);
+        sendResponse({ success: false, error: error.message });
+      });
+      return true; // Keep message channel open
+    } else if (request.action === 'enable') {
+      if (!replacer.isEnabled) {
+        replacer.toggle();
+      }
+      sendResponse({ success: true });
+    }
+  } catch (error) {
+    console.warn('消息处理失败:', error);
+    if (sendResponse) {
+      sendResponse({ success: false, error: error.message });
+    }
   }
 });

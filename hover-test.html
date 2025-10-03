@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>悬停测试页面</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 40px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    
+    .test-section {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 8px;
+      border-left: 4px solid #007bff;
+    }
+    
+    .instructions {
+      background: #e3f2fd;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 20px 0;
+      border-left: 4px solid #2196F3;
+    }
+    
+    .example {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 5px;
+      margin: 10px 0;
+      border: 1px solid #dee2e6;
+    }
+  </style>
+</head>
+<body>
+  <h1>🖱️ 悬停测试页面</h1>
+  
+  <div class="instructions">
+    <strong>测试说明：</strong><br>
+    1. 确保扩展已启用<br>
+    2. 将鼠标悬停在下面的彩色文字上<br>
+    3. 应该显示原来的文字作为提示<br>
+    4. 例如：悬停在 "wonderful" 上应该显示 "terrible"
+  </div>
+  
+  <div class="test-section">
+    <h3>英文测试</h3>
+    <div class="example">
+      <p>This is a <strong>terrible</strong> movie. I <strong>hate</strong> it so much.</p>
+      <p>预期：悬停在转换后的文字上显示 "terrible" 和 "hate"</p>
+    </div>
+    
+    <div class="example">
+      <p>You are <strong>stupid</strong> and your work is <strong>useless</strong>.</p>
+      <p>预期：悬停显示 "stupid" 和 "useless"</p>
+    </div>
+    
+    <div class="example">
+      <p>Everything is <strong>broken</strong> and I feel <strong>hopeless</strong>.</p>
+      <p>预期：悬停显示 "broken" 和 "hopeless"</p>
+    </div>
+  </div>
+  
+  <div class="test-section">
+    <h3>中文测试</h3>
+    <div class="example">
+      <p>这部电影太<strong>糟糕</strong>了，我<strong>讨厌</strong>它。</p>
+      <p>预期：悬停显示 "糟糕" 和 "讨厌"</p>
+    </div>
+    
+    <div class="example">
+      <p>你是个<strong>白痴</strong>，你的工作<strong>毫无用处</strong>。</p>
+      <p>预期：悬停显示 "白痴" 和 "毫无用处"</p>
+    </div>
+  </div>
+  
+  <div class="instructions">
+    <strong>检查项目：</strong><br>
+    • 文字是否被转换并高亮显示？<br>
+    • 悬停时是否显示原来的文字？<br>
+    • 提示文字是否正确（没有额外的 "转换" 等文字）？<br>
+    • 控制台是否有错误信息？
+  </div>
+  
+  <script>
+    console.log('悬停测试页面已加载');
+    
+    // 监听页面变化
+    const observer = new MutationObserver((mutations) => {
+      mutations.forEach((mutation) => {
+        if (mutation.type === 'childList') {
+          mutation.addedNodes.forEach((node) => {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              const spans = node.querySelectorAll('.positive-replacement');
+              if (spans.length > 0) {
+                console.log('✅ 检测到转换后的内容:', spans.length, '个');
+                spans.forEach(span => {
+                  console.log('转换内容:', span.textContent, '悬停提示:', span.title);
+                });
+              }
+            }
+          });
+        }
+      });
+    });
+    
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+    
+    // 5秒后检查结果
+    setTimeout(() => {
+      const convertedElements = document.querySelectorAll('.positive-replacement');
+      if (convertedElements.length > 0) {
+        console.log('🎉 成功！检测到', convertedElements.length, '个转换的元素');
+        console.log('请将鼠标悬停在彩色文字上测试提示功能');
+      } else {
+        console.log('❌ 没有检测到转换，可能存在问题');
+      }
+    }, 5000);
+  </script>
+</body>
+</html>
